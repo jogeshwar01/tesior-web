@@ -1,6 +1,4 @@
 import express from "express";
-import { add } from "@repo/common/config";
-console.log(add(1, 2));
 
 const app = express();
 
