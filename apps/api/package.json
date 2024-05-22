@@ -1,0 +1,19 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --platform=node --bundle --outdir=dist",
+    "dev": "esbuild src/index.ts --platform=node --bundle --outdir=dist && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "esbuild": "^0.21.3",
+    "express": "^4.19.2",
+    "@repo/common": "*"
+  }
+}
