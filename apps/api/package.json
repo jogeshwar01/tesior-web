@@ -11,9 +11,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/common": "*",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "esbuild": "^0.21.3",
     "express": "^4.19.2",
-    "@repo/common": "*"
+    "jsonwebtoken": "^9.0.2"
   }
 }
