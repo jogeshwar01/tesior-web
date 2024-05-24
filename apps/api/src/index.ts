@@ -1,6 +1,15 @@
-import express from "express";
+import express, { json } from "express";
+import cors from "cors";
+import adminRouter from "./routers/admin";
+import userRouter from "./routers/user";
 
 const app = express();
+
+app.use(express.json());
+app.use(cors());
+
+app.use("/v1/admin", adminRouter);
+app.use("/v1/user", userRouter);
 
 app.get("/", (req, res) => {
   res.json({
