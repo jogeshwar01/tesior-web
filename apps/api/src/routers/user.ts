@@ -1,13 +1,12 @@
 import { Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import prismaClient from "../database/prismaClient";
 import jwt from "jsonwebtoken";
 import { USER_JWT_SECRET } from "../config";
 import { userAuthMiddleware } from "../middlewares/auth";
 import { createTaskInput } from "@repo/common";
+import { TxnStatus, EntityType } from "@repo/common";
 
 const router = Router();
-
-const prismaClient = new PrismaClient();
 
 router.post("/signin", async (req, res) => {
   try {
@@ -119,6 +118,71 @@ router.get("/balance", userAuthMiddleware, async (req, res) => {
   } catch (error: any) {
     res.status(500).json({
       error: "An error occurred while fetching balance: " + error.message,
+    });
+  }
+});
+
+// Payout user balance to user (by application escrow)
+router.post("/payout", userAuthMiddleware, async (req, res) => {
+  try {
+    // @ts-ignore
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        error: "User is required",
+      });
+    }
+
+    // check how these could be determined
+    const txnId = "0x123456";
+
+    const user = await prismaClient.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+
+    await prismaClient.$transaction([
+      prismaClient.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          locked_amount: {
+            increment: user.pending_amount,
+          },
+          pending_amount: {
+            decrement: user.pending_amount,
+          },
+        },
+      }),
+      prismaClient.payment.create({
+        data: {
+          user_id: userId,
+          amount: user.pending_amount,
+          status: TxnStatus.Processing,
+          signature: txnId,
+          entity: EntityType.User,
+        },
+      }),
+    ]);
+
+    // send txn to blockchain, if successful update payment status to Success and update user's locked_amount to 0
+    // else update payment status to Failure and update user's pending_amount to locked_amount
+
+    res.json({
+      message: "Payout successful",
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      error: "An error occurred while processing payout: " + error.message,
     });
   }
 });

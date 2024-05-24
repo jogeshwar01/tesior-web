@@ -13,3 +13,14 @@ export enum TaskStatus {
   Approved = "Approved",
   Rejected = "Rejected",
 }
+
+export enum TxnStatus {
+  Processing = "Processing",
+  Success = "Success",
+  Failure = "Failure",
+}
+
+export enum EntityType {
+  User = "User",
+  Admin = "Admin",
+}
