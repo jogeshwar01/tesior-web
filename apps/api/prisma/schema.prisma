@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            String      @id @default(uuid())
+  address       String      @unique
+  payments      Payment[]
+}
+
+model User {
+  id                  String        @id @default(uuid())
+  address             String        @unique
+  tasks               Task[]
+  payments            Payment[]
+  pending_amount      Int             // amount in lamports (* 10^9)
+  locked_amount       Int
+}
+
+model Task {
+  id           String       @id @default(uuid())
+  user_id      String
+  title        String?      @default("Github PR")
+  signature    String
+  contact      String
+  proof        String
+  amount       Int
+  user         User         @relation(fields: [user_id], references: [id])
+  payment      Payment?
+}
+
+model Payment {
+  id            String      @id @default(uuid())
+  admin_id      String
+  admin         Admin       @relation(fields: [admin_id], references: [id])
+  user_id       String
+  user          User        @relation(fields: [user_id], references: [id])
+  task_id       String      @unique
+  task          Task        @relation(fields: [task_id], references: [id])
+  amount        Int
+  signature     String
+  status        TxnStatus
+}
+
+enum TxnStatus {
+  Processing
+  Success
+  Failure
+}

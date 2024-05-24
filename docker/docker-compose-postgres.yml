@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  db:
+    container_name: tesior-postgres
+    image: postgres
+    command: -c 'max_connections=800'
+    shm_size: 1gb
+    restart: always
+    env_file: .env
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+    networks:
+      - gateway
+    ports:
+      - "4000:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+networks:
+  gateway:
+    name: tesior
