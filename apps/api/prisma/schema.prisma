@@ -16,8 +16,9 @@ datasource db {
 model Admin {
   id                  String      @id @default(uuid())
   address             String      @unique
-  escrow_payments     EscrowPayment[]
-  user_payments       Payment[]
+  escrows             Escrow[]
+  transfers           Transfer[]
+  payments            Payment[]
   approvals           Approval[]
   pending_amount      Int
   locked_amount       Int
@@ -28,6 +29,7 @@ model User {
   address             String        @unique
   tasks               Task[]
   payments            Payment[]
+  transfers           Transfer[]
   pending_amount      Int             // amount in lamports (* 10^9)
   locked_amount       Int
 }
@@ -40,7 +42,7 @@ model Task {
   proof        String
   amount       Int
   status       TaskStatus   @default(Pending)
-  payment      Payment?
+  transfer     Transfer?
   approval     Approval?
   user_id      String
   user         User         @relation(fields: [user_id], references: [id])
@@ -55,7 +57,7 @@ model Approval {
   status        TaskStatus
 }
 
-model Payment {
+model Transfer {
   id            String      @id @default(uuid())
   admin_id      String
   admin         Admin       @relation(fields: [admin_id], references: [id])
@@ -64,11 +66,21 @@ model Payment {
   task_id       String      @unique
   task          Task        @relation(fields: [task_id], references: [id])
   amount        Int
-  signature     String
-  status        TxnStatus
 }
 
-model EscrowPayment {
+model Payment {
+  id            String      @id @default(uuid())
+  user_id       String?
+  user          User?        @relation(fields: [user_id], references: [id])
+  admin_id      String?
+  admin         Admin?       @relation(fields: [admin_id], references: [id])
+  amount        Int
+  signature     String
+  status        TxnStatus
+  entity        Entity
+}
+
+model Escrow {
   id            String      @id @default(uuid())
   admin_id      String
   admin         Admin       @relation(fields: [admin_id], references: [id])
@@ -87,4 +99,9 @@ enum TaskStatus {
   Pending
   Approved
   Rejected
+}
+
+enum Entity {
+  User
+  Admin
 }
