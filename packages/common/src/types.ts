@@ -14,6 +14,12 @@ export enum TaskStatus {
   Rejected = "Rejected",
 }
 
+export const Task = createTaskInput.extend({
+  id: z.string(),
+  status: z.nativeEnum(TaskStatus),
+  user_id: z.string(),
+});
+
 export enum TxnStatus {
   Processing = "Processing",
   Success = "Success",
@@ -24,3 +30,10 @@ export enum EntityType {
   User = "User",
   Admin = "Admin",
 }
+
+//-------------------------------------------
+// FRONTEND
+
+export type CreateTaskInput = z.infer<typeof createTaskInput>;
+
+export type TaskInput = z.infer<typeof Task>;
