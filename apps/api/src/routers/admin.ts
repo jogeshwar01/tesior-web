@@ -1,16 +1,42 @@
+import nacl from "tweetnacl";
 import { Router } from "express";
-import prismaClient from "../database/prismaClient";
 import jwt from "jsonwebtoken";
+import { PublicKey } from "@solana/web3.js";
+import prismaClient from "../database/prismaClient";
+import { TaskStatus, TxnStatus, EntityType } from "@repo/common";
 import { ADMIN_JWT_SECRET } from "../config";
 import { adminAuthMiddleware } from "../middlewares/auth";
-import { TaskStatus, TxnStatus, EntityType } from "@repo/common";
 
 const router = Router();
 
 router.post("/signin", async (req, res) => {
-  // Todo : add sign verification logic here
+  const { publicKey, signature } = req.body;
 
-  const publicKey = "0x1234567890";
+  if (!publicKey || !signature) {
+    return res.status(400).json({ message: "Missing or invalid parameters" });
+  }
+
+  const message = new TextEncoder().encode("Sign in to tesior as admin");
+  const publicKeyBytes = new PublicKey(publicKey).toBytes();
+
+  // frontend had sent signature as a uint8array, but as json doesnt natively support typed arrays like uint8array,
+  // it was converted to an object. So, we need to convert it back to a uint8array. (can also send a base64 encoded string from frontend and decode here)
+  // Phantom gives signature in { data : ... }  while backpack directly gives the uint8array
+  const signatureUint8Array = new Uint8Array(
+    signature.data ?? Object.keys(signature).map((key) => signature[key])
+  );
+
+  const result = nacl.sign.detached.verify(
+    message,
+    signatureUint8Array,
+    publicKeyBytes
+  );
+
+  if (!result) {
+    return res.status(411).json({
+      message: "Incorrect signature",
+    });
+  }
 
   try {
     const admin = await prismaClient.admin.upsert({
@@ -33,11 +59,34 @@ router.post("/signin", async (req, res) => {
     );
 
     res.json({
-      token,
+      token
     });
   } catch (error: any) {
     res.status(500).json({
       error: "An error occurred while signing in admin: " + error.message,
+    });
+  }
+});
+
+// Get User balance
+router.get("/balance", adminAuthMiddleware, async (req, res) => {
+  try {
+    // @ts-ignore
+    const adminId = req.adminId;
+
+    const admin = await prismaClient.admin.findUnique({
+      where: {
+        id: adminId,
+      },
+    });
+
+    res.json({
+      pending_amount: admin?.pending_amount,
+      locked_amount: admin?.locked_amount,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      error: "An error occurred while fetching balance: " + error.message,
     });
   }
 });

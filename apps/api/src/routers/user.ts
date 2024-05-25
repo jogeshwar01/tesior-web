@@ -1,18 +1,41 @@
+import nacl from "tweetnacl";
 import { Router } from "express";
-import prismaClient from "../database/prismaClient";
 import jwt from "jsonwebtoken";
-import { USER_JWT_SECRET } from "../config";
-import { userAuthMiddleware } from "../middlewares/auth";
+import { PublicKey } from "@solana/web3.js";
 import { createTaskInput } from "@repo/common";
 import { TxnStatus, EntityType } from "@repo/common";
+import { USER_JWT_SECRET } from "../config";
+import { userAuthMiddleware } from "../middlewares/auth";
+import prismaClient from "../database/prismaClient";
 
 const router = Router();
 
 router.post("/signin", async (req, res) => {
   try {
-    // Todo : add sign verification logic here
+    const { publicKey, signature } = req.body;
 
-    const publicKey = "0x9999999";
+    if (!publicKey || !signature) {
+      return res.status(400).json({ message: "Missing or invalid parameters" });
+    }
+
+    const message = new TextEncoder().encode("Sign in to tesior as user");
+    const publicKeyBytes = new PublicKey(publicKey).toBytes();
+
+    const signatureUint8Array = new Uint8Array(
+      signature.data ?? Object.keys(signature).map((key) => signature[key])
+    );
+
+    const result = nacl.sign.detached.verify(
+      message,
+      signatureUint8Array,
+      publicKeyBytes
+    );
+
+    if (!result) {
+      return res.status(411).json({
+        message: "Incorrect signature",
+      });
+    }
     const user = await prismaClient.user.upsert({
       where: {
         address: publicKey,
@@ -33,7 +56,7 @@ router.post("/signin", async (req, res) => {
     );
 
     res.json({
-      token,
+      token
     });
   } catch (error: any) {
     res.status(500).json({
