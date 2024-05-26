@@ -1,12 +1,19 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useCallback, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { BACKEND_URL } from "../../config.ts";
 import axios from "axios";
+import { AddBalance } from "./AddBalance.tsx";
+import { WithdrawBalance } from "./WithdrawBalance.tsx";
 
-export const AppBar = () => {
+export const AppBar = ({
+  balance,
+  setBalance,
+}: {
+  balance: number;
+  setBalance: Dispatch<SetStateAction<number>>;
+}) => {
   const { publicKey, signMessage } = useWallet();
-  const [balance, setBalance] = useState<number>(0);
 
   const getBalance = useCallback(async () => {
     if (!publicKey) {
@@ -19,7 +26,7 @@ export const AppBar = () => {
       },
     });
     setBalance(response.data.pending_amount);
-  }, [publicKey]);
+  }, [publicKey, setBalance]);
 
   const signAndSend = useCallback(async () => {
     if (!publicKey) {
@@ -51,7 +58,11 @@ export const AppBar = () => {
       <div className="text-2xl pl-4 flex justify-center pt-4">
         Tesior - Admin
       </div>
+
       <div className="text-xl pr-4 pb-2 pt-2">Balance : {balance}</div>
+      <WithdrawBalance setBalance={setBalance} />
+      <AddBalance setBalance={setBalance} />
+
       <div className="text-xl pr-4 pb-2 pt-2">
         <WalletMultiButton />
       </div>

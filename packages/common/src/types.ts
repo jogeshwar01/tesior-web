@@ -12,6 +12,7 @@ export enum TaskStatus {
   Pending = "Pending",
   Approved = "Approved",
   Rejected = "Rejected",
+  Paid = "Paid",
 }
 
 export const Task = createTaskInput.extend({

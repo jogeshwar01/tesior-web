@@ -11,12 +11,14 @@ import { useState } from "react";
 window.Buffer = buffer.Buffer;
 
 function App() {
+  const [balance, setBalance] = useState<number>(0);
+  
   return (
     <BrowserRouter>
       <ConnectWalletProvider>
-        <AppBar />
+        <AppBar balance={balance} setBalance={setBalance}/>
         <Routes>
-          <Route path="/" element={<Task />} />
+          <Route path="/" element={<Task setBalance={setBalance}/>} />
         </Routes>
       </ConnectWalletProvider>
     </BrowserRouter>

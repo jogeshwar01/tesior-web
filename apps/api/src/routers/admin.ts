@@ -1,11 +1,27 @@
 import nacl from "tweetnacl";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { PublicKey } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
+import { decode } from "bs58";
 import prismaClient from "../database/prismaClient";
 import { TaskStatus, TxnStatus, EntityType } from "@repo/common";
-import { ADMIN_JWT_SECRET } from "../config";
+import {
+  ADMIN_JWT_SECRET,
+  PARENT_WALLET_ADDRESS,
+  PRIVATE_KEY,
+  RPC_URL,
+  TOTAL_DECIMALS,
+} from "../config";
 import { adminAuthMiddleware } from "../middlewares/auth";
+
+const connection = new Connection(RPC_URL);
 
 const router = Router();
 
@@ -59,7 +75,7 @@ router.post("/signin", async (req, res) => {
     );
 
     res.json({
-      token
+      token,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -130,7 +146,8 @@ router.put("/task/:id", adminAuthMiddleware, async (req, res) => {
   // Check if the new status is a valid TaskStatus
   if (!Object.values(TaskStatus).includes(status)) {
     return res.status(400).json({
-      error: "Invalid status. Valid statuses are: Pending, Approved, Rejected.",
+      error:
+        "Invalid status. Valid statuses are: Pending, Approved, Rejected, Paid.",
     });
   }
 
@@ -188,6 +205,12 @@ router.post("/escrow", adminAuthMiddleware, async (req, res) => {
     });
   }
 
+  const admin = await prismaClient.admin.findUnique({
+    where: {
+      id: adminId,
+    },
+  });
+
   const { amount, signature } = req.body;
 
   if (!amount || !signature || !adminId) {
@@ -206,11 +229,65 @@ router.post("/escrow", adminAuthMiddleware, async (req, res) => {
       },
     });
 
-    // all web3 code will go here
-    // if txn succeeds, update escrow status to Success and update admin's pending_amount
+    // need to wait here to ensure the transaction is confirmed
+    await new Promise((resolve) => setTimeout(resolve, 30000));
+    const transaction = await connection.getTransaction(signature, {
+      maxSupportedTransactionVersion: 1,
+    });
+
+    if (
+      (transaction?.meta?.postBalances[1] ?? 0) -
+        (transaction?.meta?.preBalances[1] ?? 0) !==
+      amount * 1000000000
+    ) {
+      return res.status(411).json({
+        message: "Transaction signature/amount incorrect",
+      });
+    }
+
+    if (
+      transaction?.transaction.message.getAccountKeys().get(1)?.toString() !==
+      PARENT_WALLET_ADDRESS
+    ) {
+      return res.status(411).json({
+        message: "Transaction sent to wrong address",
+      });
+    }
+
+    if (
+      transaction?.transaction.message.getAccountKeys().get(0)?.toString() !==
+      admin?.address
+    ) {
+      return res.status(411).json({
+        message: "Transaction sent to wrong address",
+      });
+    }
+
+    // check time also - a user can send the same signature again and again
+    // parse the signature here to ensure the person has paid 0.1 SOL - is it just a system transfer or something else
+    // const transaction = Transaction.from(parseData.data.signature);
+
+    await prismaClient.$transaction([
+      prismaClient.escrow.update({
+        where: {
+          id: escrow.id,
+        },
+        data: {
+          status: TxnStatus.Success,
+        },
+      }),
+      prismaClient.admin.update({
+        where: {
+          id: adminId,
+        },
+        data: {
+          pending_amount: admin.pending_amount + Number(amount),
+        },
+      }),
+    ]);
 
     res.json({
-      escrow,
+      pending_amount: admin.pending_amount + Number(amount),
     });
   } catch (error: any) {
     res.status(500).json({
@@ -230,9 +307,23 @@ router.post("/transfer", adminAuthMiddleware, async (req, res) => {
     });
   }
 
-  const { userId, amount, taskId } = req.body;
+  const { taskId } = req.body;
 
-  if (!userId || !amount) {
+  const task = await prismaClient.task.findUnique({
+    where: {
+      id: taskId,
+    },
+  });
+
+  if (!task) {
+    return res.status(404).json({
+      error: "Task not found.",
+    });
+  }
+
+  const { user_id, amount } = task;
+
+  if (!user_id || !amount) {
     return res.status(400).json({
       error: "User ID and Amount are required.",
     });
@@ -241,7 +332,7 @@ router.post("/transfer", adminAuthMiddleware, async (req, res) => {
   try {
     const user = await prismaClient.user.findUnique({
       where: {
-        id: userId,
+        id: user_id,
       },
     });
 
@@ -272,7 +363,7 @@ router.post("/transfer", adminAuthMiddleware, async (req, res) => {
     // Start a transaction to update user's balance and admin's pending_amount
     const result = await prismaClient.$transaction(async (prisma: any) => {
       const updatedUser = await prisma.user.update({
-        where: { id: userId },
+        where: { id: user_id },
         data: { pending_amount: user.pending_amount + Number(amount) },
       });
 
@@ -281,22 +372,26 @@ router.post("/transfer", adminAuthMiddleware, async (req, res) => {
         data: { pending_amount: admin.pending_amount - Number(amount) },
       });
 
+      await prisma.task.update({
+        where: { id: taskId },
+        data: { status: TaskStatus.Paid },
+      });
+
       await prisma.transfer.create({
         data: {
-          user_id: userId,
+          user_id: user_id,
           admin_id: adminId,
           task_id: taskId,
           amount: Number(amount),
         },
       });
 
-      return { updatedUser, updatedAdmin };
+      return { updatedAdmin };
     });
 
     // If the transaction is successful, return the success response
     res.status(200).json({
       message: "Funds transferred successfully.",
-      user: result.updatedUser,
       admin: result.updatedAdmin,
     });
   } catch (error: any) {
@@ -318,18 +413,50 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
       });
     }
 
-    // check how these could be determined
-    const txnId = "0x123456";
-
     const admin = await prismaClient.admin.findUnique({
       where: {
         id: adminId,
       },
     });
-
     if (!admin) {
       return res.status(404).json({
         error: "Admin not found",
+      });
+    }
+
+    await prismaClient.user.update({
+      where: {
+        id: adminId,
+      },
+      data: {
+        locked_amount: {
+          increment: admin.pending_amount,
+        },
+        pending_amount: {
+          decrement: admin.pending_amount,
+        },
+      },
+    });
+
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
+        toPubkey: new PublicKey(admin.address),
+        lamports: admin.pending_amount * TOTAL_DECIMALS,
+      })
+    );
+
+    const keypair = Keypair.fromSecretKey(decode(PRIVATE_KEY));
+    // TODO: There's a double spending problem here - if server goes down just after sendAndConfirmTxn
+    // The user can request the withdrawal multiple times. Put in a queue and process it later.
+    let signature = "";
+    try {
+      signature = await sendAndConfirmTransaction(connection, transaction, [
+        keypair,
+      ]);
+    } catch (e) {
+      return res.json({
+        message: "Transaction failed",
       });
     }
 
@@ -339,12 +466,7 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
           id: adminId,
         },
         data: {
-          locked_amount: {
-            increment: admin.pending_amount,
-          },
-          pending_amount: {
-            decrement: admin.pending_amount,
-          },
+          locked_amount: 0,
         },
       }),
       prismaClient.payment.create({
@@ -352,13 +474,12 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
           admin_id: adminId,
           amount: admin.pending_amount,
           status: TxnStatus.Processing,
-          signature: txnId,
+          signature: signature,
           entity: EntityType.Admin,
         },
       }),
     ]);
-
-    // send txn to blockchain, if successful update payment status to Success and update admin's locked_amount to 0
+    // keep checking the transaction via polling, if successful update payment status to Success and update admin's locked_amount to 0
     // else update payment status to Failure and update admin's pending_amount to locked_amount
 
     res.json({

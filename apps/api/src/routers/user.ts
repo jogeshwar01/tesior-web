@@ -1,12 +1,28 @@
 import nacl from "tweetnacl";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import { PublicKey } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
 import { createTaskInput } from "@repo/common";
 import { TxnStatus, EntityType } from "@repo/common";
-import { USER_JWT_SECRET } from "../config";
+import {
+  PARENT_WALLET_ADDRESS,
+  PRIVATE_KEY,
+  RPC_URL,
+  TOTAL_DECIMALS,
+  USER_JWT_SECRET,
+} from "../config";
 import { userAuthMiddleware } from "../middlewares/auth";
 import prismaClient from "../database/prismaClient";
+import { decode } from "bs58";
+
+const connection = new Connection(RPC_URL);
 
 const router = Router();
 
@@ -56,7 +72,7 @@ router.post("/signin", async (req, res) => {
     );
 
     res.json({
-      token
+      token,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -75,7 +91,6 @@ router.post("/task", userAuthMiddleware, async (req, res) => {
     const parseData = createTaskInput.safeParse(body);
 
     if (!parseData.success) {
-      console.log(parseData.error);
       return res.status(411).json({
         message: "You've sent the wrong inputs",
       });
@@ -157,9 +172,6 @@ router.post("/payout", userAuthMiddleware, async (req, res) => {
       });
     }
 
-    // check how these could be determined
-    const txnId = "0x123456";
-
     const user = await prismaClient.user.findUnique({
       where: {
         id: userId,
@@ -172,33 +184,59 @@ router.post("/payout", userAuthMiddleware, async (req, res) => {
       });
     }
 
+    await prismaClient.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        locked_amount: {
+          increment: user.pending_amount,
+        },
+        pending_amount: {
+          decrement: user.pending_amount,
+        },
+      },
+    });
+
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
+        toPubkey: new PublicKey(user.address),
+        lamports: user.pending_amount * TOTAL_DECIMALS,
+      })
+    );
+
+    const keypair = Keypair.fromSecretKey(decode(PRIVATE_KEY));
+    let signature = "";
+    try {
+      signature = await sendAndConfirmTransaction(connection, transaction, [
+        keypair,
+      ]);
+    } catch (e) {
+      return res.json({
+        message: "Transaction failed",
+      });
+    }
+
     await prismaClient.$transaction([
       prismaClient.user.update({
         where: {
           id: userId,
         },
         data: {
-          locked_amount: {
-            increment: user.pending_amount,
-          },
-          pending_amount: {
-            decrement: user.pending_amount,
-          },
+          locked_amount: 0,
         },
       }),
       prismaClient.payment.create({
         data: {
           user_id: userId,
           amount: user.pending_amount,
-          status: TxnStatus.Processing,
-          signature: txnId,
+          status: TxnStatus.Success,
+          signature: signature,
           entity: EntityType.User,
         },
       }),
     ]);
-
-    // send txn to blockchain, if successful update payment status to Success and update user's locked_amount to 0
-    // else update payment status to Failure and update user's pending_amount to locked_amount
 
     res.json({
       message: "Payout successful",

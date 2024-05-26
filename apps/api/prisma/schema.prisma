@@ -99,6 +99,7 @@ enum TaskStatus {
   Pending
   Approved
   Rejected
+  Paid
 }
 
 enum Entity {

@@ -1,9 +1,13 @@
 import { TaskInput, TaskStatus } from "@repo/common";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../../config.ts";
 
-export const Task = () => {
+export const Task = ({
+  setBalance,
+}: {
+  setBalance: Dispatch<SetStateAction<number>>;
+}) => {
   const [tasks, setTasks] = useState<TaskInput[]>([]);
 
   async function getTasks() {
@@ -39,6 +43,36 @@ export const Task = () => {
     });
 
     setTasks(newTasks);
+  }
+
+  async function handleTransfer(taskId: string) {
+    const response = await axios.post(
+      `${BACKEND_URL}/v1/admin/transfer`,
+      {
+        taskId,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+
+    if (response.data.admin.pending_amount) {
+      setBalance(response.data.admin.pending_amount);
+
+      const newTasks = tasks.map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            status: TaskStatus.Paid,
+          };
+        }
+        return task;
+      });
+
+      setTasks(newTasks);
+    }
   }
 
   useEffect(() => {
@@ -84,7 +118,14 @@ export const Task = () => {
             )}
 
             {task.status === TaskStatus.Approved && (
-              <button className="text-pink-500">Pay</button>
+              <button
+                className="text-pink-500"
+                onClick={async () => {
+                  await handleTransfer(task.id);
+                }}
+              >
+                Pay
+              </button>
             )}
           </li>
         ))}

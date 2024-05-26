@@ -42,6 +42,19 @@ export const AppBar = () => {
     getBalance();
   }, [getBalance, publicKey, signMessage]);
 
+  const handlePayout = useCallback(async () => {
+    await axios.post(
+      `${BACKEND_URL}/v1/user/payout`,
+      {},
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    getBalance();
+  }, [getBalance]);
+
   useEffect(() => {
     signAndSend();
   }, [publicKey, signAndSend]);
@@ -52,6 +65,16 @@ export const AppBar = () => {
         Tesior - User
       </div>
       <div className="text-xl pr-4 pb-2 pt-2">Balance : {balance}</div>
+
+      <div className="text-xl pr-4 pb-2 pt-2">
+        <button
+          onClick={async () => {
+            handlePayout();
+          }}
+        >
+          Withdraw
+        </button>
+      </div>
       <div className="text-xl pr-4 pb-2 pt-2">
         <WalletMultiButton />
       </div>
