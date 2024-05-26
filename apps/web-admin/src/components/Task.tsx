@@ -87,7 +87,6 @@ export const Task = ({
         {tasks.map((task) => (
           <li key={task.id} className="flex m-5">
             <h1>{task.title}</h1>
-            <span>{task.signature}</span>
             <span>{task.contact}</span>
             <a href={task.proof} style={{ color: "blue" }}>
               {task.proof}

@@ -37,7 +37,6 @@ model User {
 model Task {
   id           String       @id @default(uuid())
   title        String?      @default("Github PR")
-  signature    String       @unique
   contact      String
   proof        String
   amount       Int

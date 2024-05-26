@@ -6,7 +6,6 @@ export const CreateTask = () => {
   const [title, setTitle] = useState("");
   const [contact, setContact] = useState("");
   const [proof, setProof] = useState("");
-  const [signature, setSignature] = useState("");
   const [amount, setAmount] = useState(0);
 
   async function createTask() {
@@ -16,7 +15,6 @@ export const CreateTask = () => {
         title,
         contact,
         proof,
-        signature,
         amount,
       },
       {
@@ -29,7 +27,6 @@ export const CreateTask = () => {
     setTitle("");
     setContact("");
     setProof("");
-    setSignature("");
     setAmount(0);
   }
 
@@ -52,12 +49,6 @@ export const CreateTask = () => {
         placeholder="Proof"
         value={proof}
         onChange={(e) => setProof(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Signature"
-        value={signature}
-        onChange={(e) => setSignature(e.target.value)}
       />
       <input
         type="number"

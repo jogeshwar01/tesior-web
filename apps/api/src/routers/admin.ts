@@ -17,7 +17,6 @@ import {
   PARENT_WALLET_ADDRESS,
   PRIVATE_KEY,
   RPC_URL,
-  TOTAL_DECIMALS,
 } from "../config";
 import { adminAuthMiddleware } from "../middlewares/auth";
 
@@ -84,7 +83,7 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-// Get User balance
+// Get Admin balance
 router.get("/balance", adminAuthMiddleware, async (req, res) => {
   try {
     // @ts-ignore
@@ -238,7 +237,7 @@ router.post("/escrow", adminAuthMiddleware, async (req, res) => {
     if (
       (transaction?.meta?.postBalances[1] ?? 0) -
         (transaction?.meta?.preBalances[1] ?? 0) !==
-      amount * 1000000000
+      amount
     ) {
       return res.status(411).json({
         message: "Transaction signature/amount incorrect",
@@ -424,7 +423,7 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
       });
     }
 
-    await prismaClient.user.update({
+    await prismaClient.admin.update({
       where: {
         id: adminId,
       },
@@ -442,7 +441,7 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
       SystemProgram.transfer({
         fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
         toPubkey: new PublicKey(admin.address),
-        lamports: admin.pending_amount * TOTAL_DECIMALS,
+        lamports: admin.pending_amount,
       })
     );
 
@@ -473,7 +472,7 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
         data: {
           admin_id: adminId,
           amount: admin.pending_amount,
-          status: TxnStatus.Processing,
+          status: TxnStatus.Success,
           signature: signature,
           entity: EntityType.Admin,
         },

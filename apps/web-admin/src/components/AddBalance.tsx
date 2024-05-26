@@ -2,7 +2,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
-import { BACKEND_URL, PARENT_WALLET_ADDRESS } from "../../config.ts";
+import { BACKEND_URL, PARENT_WALLET_ADDRESS, TOTAL_DECIMALS } from "../../config.ts";
 
 export const AddBalance = ({
   setBalance,
@@ -18,7 +18,7 @@ export const AddBalance = ({
       SystemProgram.transfer({
         fromPubkey: publicKey!,
         toPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
-        lamports: amount * 1000000000,
+        lamports: amount * TOTAL_DECIMALS,
       })
     );
 
@@ -40,7 +40,7 @@ export const AddBalance = ({
     const response = await axios.post(
       `${BACKEND_URL}/v1/admin/escrow`,
       {
-        amount: amount,
+        amount: amount * TOTAL_DECIMALS,
         signature: signature,
       },
       {

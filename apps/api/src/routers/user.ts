@@ -15,7 +15,6 @@ import {
   PARENT_WALLET_ADDRESS,
   PRIVATE_KEY,
   RPC_URL,
-  TOTAL_DECIMALS,
   USER_JWT_SECRET,
 } from "../config";
 import { userAuthMiddleware } from "../middlewares/auth";
@@ -100,7 +99,6 @@ router.post("/task", userAuthMiddleware, async (req, res) => {
       data: {
         title: parseData.data.title,
         amount: parseData.data.amount,
-        signature: parseData.data.signature,
         user_id: userId,
         contact: parseData.data.contact,
         proof: parseData.data.proof,
@@ -202,7 +200,7 @@ router.post("/payout", userAuthMiddleware, async (req, res) => {
       SystemProgram.transfer({
         fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
         toPubkey: new PublicKey(user.address),
-        lamports: user.pending_amount * TOTAL_DECIMALS,
+        lamports: user.pending_amount,
       })
     );
 

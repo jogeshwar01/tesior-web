@@ -1,15 +1,30 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { BACKEND_URL } from "../../config.ts";
 import axios from "axios";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const WithdrawBalance = ({
   setBalance,
 }: {
   setBalance: Dispatch<SetStateAction<number>>;
 }) => {
+  const publicKey = useWallet();
+
+  const getBalance = useCallback(async () => {
+    if (!publicKey) {
+      return;
+    }
+
+    const response = await axios.get(`${BACKEND_URL}/v1/admin/balance`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    setBalance(response.data.pending_amount);
+  }, [publicKey, setBalance]);
 
   async function makeWithdraw() {
-    const response = await axios.post(
+    await axios.post(
       `${BACKEND_URL}/v1/admin/payout`,
       {},
       {
@@ -19,7 +34,7 @@ export const WithdrawBalance = ({
       }
     );
 
-    setBalance(response.data.pending_amount);
+    getBalance();
   }
 
   return (
