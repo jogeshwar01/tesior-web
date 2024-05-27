@@ -4,7 +4,11 @@
     "outDir": "dist",
     // add the next 2 to get rid of import error of .tsx file
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
