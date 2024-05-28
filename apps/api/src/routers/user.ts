@@ -1,27 +1,22 @@
 import nacl from "tweetnacl";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import {
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { createTaskInput } from "@repo/common";
-import { TxnStatus, EntityType } from "@repo/common";
-import {
-  PARENT_WALLET_ADDRESS,
-  PRIVATE_KEY,
-  RPC_URL,
-  USER_JWT_SECRET,
-} from "../config";
+import { USER_JWT_SECRET } from "../config";
 import { userAuthMiddleware } from "../middlewares/auth";
 import prismaClient from "../database/prismaClient";
-import { decode } from "bs58";
-
-const connection = new Connection(RPC_URL);
+import { userPayoutQueue } from "../redis/queues";
+import { userPayoutWorker } from "../redis/workers";
+async function userWorkers() {
+  try {
+    await userPayoutWorker.waitUntilReady();
+    console.log("User workers ready!");
+  } catch (error) {
+    console.error("Failed to initialize user worker:", error);
+  }
+}
+userWorkers();
 
 const router = Router();
 
@@ -170,74 +165,44 @@ router.post("/payout", userAuthMiddleware, async (req, res) => {
       });
     }
 
-    const user = await prismaClient.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    await prismaClient.$transaction(
+      async (tx: any) => {
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+        });
+        if (!user) {
+          throw new Error("User not found");
+        }
+        if (user.pending_amount < 30000000) {
+          throw new Error(
+            "Your need to have atleast 0.03 sol as pending amount to withdraw."
+          );
+        }
+        const amount = user.pending_amount;
 
-    if (!user) {
-      return res.status(404).json({
-        error: "User not found",
-      });
-    }
-
-    await prismaClient.user.update({
-      where: {
-        id: userId,
+        await tx.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            pending_amount: {
+              decrement: amount,
+            },
+            locked_amount: {
+              increment: amount,
+            },
+          },
+        });
       },
-      data: {
-        locked_amount: {
-          increment: user.pending_amount,
-        },
-        pending_amount: {
-          decrement: user.pending_amount,
-        },
-      },
-    });
-
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
-        toPubkey: new PublicKey(user.address),
-        lamports: user.pending_amount,
-      })
+      {
+        isolationLevel: "Serializable", // runs all concurrent request in series and prevents double spending
+      }
     );
 
-    const keypair = Keypair.fromSecretKey(decode(PRIVATE_KEY));
-    let signature = "";
-    try {
-      signature = await sendAndConfirmTransaction(connection, transaction, [
-        keypair,
-      ]);
-    } catch (e) {
-      return res.json({
-        message: "Transaction failed",
-      });
-    }
+    userPayoutQueue.add("process-queue", { userId });
 
-    await prismaClient.$transaction([
-      prismaClient.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          locked_amount: 0,
-        },
-      }),
-      prismaClient.payment.create({
-        data: {
-          user_id: userId,
-          amount: user.pending_amount,
-          status: TxnStatus.Success,
-          signature: signature,
-          entity: EntityType.User,
-        },
-      }),
-    ]);
-
-    res.json({
-      message: "Payout successful",
+    return res.status(200).json({
+      message: "Pending amount locked. Payout will be processed shortly",
     });
   } catch (error: any) {
     res.status(500).json({

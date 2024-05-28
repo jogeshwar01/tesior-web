@@ -68,13 +68,13 @@ model Transfer {
 }
 
 model Payment {
-  id            String      @id @default(uuid())
+  id            String       @id @default(uuid())
   user_id       String?
   user          User?        @relation(fields: [user_id], references: [id])
   admin_id      String?
   admin         Admin?       @relation(fields: [admin_id], references: [id])
   amount        Int
-  signature     String
+  signature     String       @unique
   status        TxnStatus
   entity        Entity
 }
@@ -84,7 +84,7 @@ model Escrow {
   admin_id      String
   admin         Admin       @relation(fields: [admin_id], references: [id])
   amount        Int
-  signature     String
+  signature     String      @unique
   status        TxnStatus
 }
 

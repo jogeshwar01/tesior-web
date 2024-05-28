@@ -1,26 +1,23 @@
 import nacl from "tweetnacl";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-import {
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import { decode } from "bs58";
+import { PublicKey } from "@solana/web3.js";
 import prismaClient from "../database/prismaClient";
-import { TaskStatus, TxnStatus, EntityType } from "@repo/common";
-import {
-  ADMIN_JWT_SECRET,
-  PARENT_WALLET_ADDRESS,
-  PRIVATE_KEY,
-  RPC_URL,
-} from "../config";
+import { TaskStatus } from "@repo/common";
+import { ADMIN_JWT_SECRET } from "../config";
 import { adminAuthMiddleware } from "../middlewares/auth";
-
-const connection = new Connection(RPC_URL);
+import { adminPayoutQueue, adminEscrowQueue } from "../redis/queues";
+import { adminPayoutWorker, adminEscrowWorker } from "../redis/workers";
+async function adminWorkers() {
+  try {
+    await adminEscrowWorker.waitUntilReady();
+    await adminPayoutWorker.waitUntilReady();
+    console.log("Admin workers ready!");
+  } catch (error) {
+    console.error("Failed to initialize admin workers:", error);
+  }
+}
+adminWorkers();
 
 const router = Router();
 
@@ -204,12 +201,6 @@ router.post("/escrow", adminAuthMiddleware, async (req, res) => {
     });
   }
 
-  const admin = await prismaClient.admin.findUnique({
-    where: {
-      id: adminId,
-    },
-  });
-
   const { amount, signature } = req.body;
 
   if (!amount || !signature || !adminId) {
@@ -219,74 +210,10 @@ router.post("/escrow", adminAuthMiddleware, async (req, res) => {
   }
 
   try {
-    const escrow = await prismaClient.escrow.create({
-      data: {
-        admin_id: adminId,
-        amount: Number(amount),
-        signature,
-        status: TxnStatus.Processing,
-      },
-    });
+    adminEscrowQueue.add("process-queue", { adminId, amount, signature });
 
-    // need to wait here to ensure the transaction is confirmed
-    await new Promise((resolve) => setTimeout(resolve, 30000));
-    const transaction = await connection.getTransaction(signature, {
-      maxSupportedTransactionVersion: 1,
-    });
-
-    if (
-      (transaction?.meta?.postBalances[1] ?? 0) -
-        (transaction?.meta?.preBalances[1] ?? 0) !==
-      amount
-    ) {
-      return res.status(411).json({
-        message: "Transaction signature/amount incorrect",
-      });
-    }
-
-    if (
-      transaction?.transaction.message.getAccountKeys().get(1)?.toString() !==
-      PARENT_WALLET_ADDRESS
-    ) {
-      return res.status(411).json({
-        message: "Transaction sent to wrong address",
-      });
-    }
-
-    if (
-      transaction?.transaction.message.getAccountKeys().get(0)?.toString() !==
-      admin?.address
-    ) {
-      return res.status(411).json({
-        message: "Transaction sent to wrong address",
-      });
-    }
-
-    // check time also - a user can send the same signature again and again
-    // parse the signature here to ensure the person has paid 0.1 SOL - is it just a system transfer or something else
-    // const transaction = Transaction.from(parseData.data.signature);
-
-    await prismaClient.$transaction([
-      prismaClient.escrow.update({
-        where: {
-          id: escrow.id,
-        },
-        data: {
-          status: TxnStatus.Success,
-        },
-      }),
-      prismaClient.admin.update({
-        where: {
-          id: adminId,
-        },
-        data: {
-          pending_amount: admin.pending_amount + Number(amount),
-        },
-      }),
-    ]);
-
-    res.json({
-      pending_amount: admin.pending_amount + Number(amount),
+    res.status(200).json({
+      message: "Escrow creation initiated. It will be processed shortly",
     });
   } catch (error: any) {
     res.status(500).json({
@@ -408,81 +335,48 @@ router.post("/payout", adminAuthMiddleware, async (req, res) => {
 
     if (!adminId) {
       return res.status(400).json({
-        error: "Admin is required.",
+        error: "Admin is required",
       });
     }
 
-    const admin = await prismaClient.admin.findUnique({
-      where: {
-        id: adminId,
-      },
-    });
-    if (!admin) {
-      return res.status(404).json({
-        error: "Admin not found",
-      });
-    }
+    await prismaClient.$transaction(
+      async (tx: any) => {
+        const admin = await tx.admin.findUnique({
+          where: { id: adminId },
+        });
+        if (!admin) {
+          throw new Error("Admin not found");
+        }
+        if (admin.pending_amount < 30000000) {
+          throw new Error(
+            "Your need to have atleast 0.03 sol as pending amount to withdraw."
+          );
+        }
+        const amount = admin.pending_amount;
 
-    await prismaClient.admin.update({
-      where: {
-        id: adminId,
+        await tx.admin.update({
+          where: {
+            id: adminId,
+          },
+          data: {
+            pending_amount: {
+              decrement: amount,
+            },
+            locked_amount: {
+              increment: amount,
+            },
+          },
+        });
       },
-      data: {
-        locked_amount: {
-          increment: admin.pending_amount,
-        },
-        pending_amount: {
-          decrement: admin.pending_amount,
-        },
-      },
-    });
-
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
-        toPubkey: new PublicKey(admin.address),
-        lamports: admin.pending_amount,
-      })
+      {
+        isolationLevel: "Serializable", // runs all concurrent request in series and prevents double spending
+      }
     );
 
-    const keypair = Keypair.fromSecretKey(decode(PRIVATE_KEY));
-    // TODO: There's a double spending problem here - if server goes down just after sendAndConfirmTxn
-    // The user can request the withdrawal multiple times. Put in a queue and process it later.
-    let signature = "";
-    try {
-      signature = await sendAndConfirmTransaction(connection, transaction, [
-        keypair,
-      ]);
-    } catch (e) {
-      return res.json({
-        message: "Transaction failed",
-      });
-    }
+    adminPayoutQueue.add("process-queue", { adminId });
 
-    await prismaClient.$transaction([
-      prismaClient.admin.update({
-        where: {
-          id: adminId,
-        },
-        data: {
-          locked_amount: 0,
-        },
-      }),
-      prismaClient.payment.create({
-        data: {
-          admin_id: adminId,
-          amount: admin.pending_amount,
-          status: TxnStatus.Success,
-          signature: signature,
-          entity: EntityType.Admin,
-        },
-      }),
-    ]);
-    // keep checking the transaction via polling, if successful update payment status to Success and update admin's locked_amount to 0
-    // else update payment status to Failure and update admin's pending_amount to locked_amount
-
-    res.json({
-      message: "Payout successful",
+    return res.status(200).json({
+      message: "Pending amount locked. Payout will be processed shortly",
     });
   } catch (error: any) {
     res.status(500).json({
