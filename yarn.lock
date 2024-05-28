@@ -8639,6 +8639,13 @@ sha.js@^2.4.0, sha.js@^2.4.11, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+shamirs-secret-sharing-ts@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/shamirs-secret-sharing-ts/-/shamirs-secret-sharing-ts-1.0.2.tgz#80163388969d6e3c310892ff12550c0826a72b85"
+  integrity sha512-ivkVMtPptlg768v6pfqeva5JXsJitAw+vv3+aUPlNTi69fCTD69S+E+gTw0Yz99tuyz9a3eC1oiVC1WT2Kcl/w==
+  dependencies:
+    randombytes "^2.1.0"
+
 shebang-command@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/shebang-command/-/shebang-command-2.0.0.tgz#ccd0af4f8835fbdc265b82461aaf0c36663f34ea"

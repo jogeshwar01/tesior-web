@@ -23,6 +23,7 @@
     "esbuild": "^0.21.3",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "shamirs-secret-sharing-ts": "^1.0.2",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
