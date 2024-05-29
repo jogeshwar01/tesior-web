@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// To fix issue - PrismaClientInitializationError: Prisma Client could not locate the Query Engine for runtime "debian-openssl-1.1.x"
+// ** Only for development - Resets db - Run `yarn prisma migrate dev`
+
 generator client {
   provider = "prisma-client-js"
 }
