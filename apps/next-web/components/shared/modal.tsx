@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { cn } from "@/lib/utils";
 import { Drawer } from "vaul";
 import * as Dialog from "@radix-ui/react-dialog";
-import useMediaQuery from "@/lib/hooks/use-media-query";
+import { useMediaQuery } from "@/lib/hooks";
 
 export default function Modal({
   children,
@@ -27,7 +27,7 @@ export default function Modal({
           <Drawer.Content
             className={cn(
               "fixed bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t border-gray-200 bg-white",
-              className,
+              className
             )}
           >
             <div className="sticky top-0 z-20 flex w-full items-center justify-center rounded-t-[10px] bg-inherit">
@@ -53,7 +53,7 @@ export default function Modal({
           onCloseAutoFocus={(e) => e.preventDefault()}
           className={cn(
             "animate-scale-in fixed inset-0 z-40 m-auto max-h-fit w-full max-w-md overflow-hidden border border-gray-200 bg-white p-0 shadow-xl md:rounded-2xl",
-            className,
+            className
           )}
         >
           {children}
