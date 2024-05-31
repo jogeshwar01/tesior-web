@@ -11,7 +11,7 @@ import {
 } from "next/navigation";
 import { createContext } from "react";
 import { useScroll } from "@/lib/hooks";
-import { MaxWidthWrapper } from "../shared/max-width-wrapper";
+import { MaxWidthWrapper } from "../shared";
 import { useSignInModal } from "./sign-in-modal";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
@@ -25,8 +25,8 @@ export const NavContext = createContext<{ theme: NavTheme }>({
 
 export const navItems = [
   {
-    name: "Create Task",
-    slug: "create",
+    name: "Tasks",
+    slug: "tasks",
   },
   {
     name: "Payments",

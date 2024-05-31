@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
-import Popover from "@/components/shared/popover";
+import { Popover } from "@/components/shared";
 import Image from "next/image";
 import { Session } from "next-auth";
 

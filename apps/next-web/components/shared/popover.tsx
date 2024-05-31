@@ -5,7 +5,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Drawer } from "vaul";
 import { useMediaQuery } from "@/lib/hooks";
 
-export default function Popover({
+export function Popover({
   children,
   content,
   align = "center",
