@@ -6,7 +6,7 @@ export default async function Home() {
     <>
       <div className="z-10 w-full max-w-xl px-5 xl:px-0">
         <a
-          href="https://twitter.com/steventey/status/1613928948915920896"
+          href="https://twitter.com/jogeshwar01"
           target="_blank"
           rel="noreferrer"
           className="mx-auto mb-5 flex max-w-fit animate-fade-up items-center justify-center space-x-2 overflow-hidden rounded-full bg-gray-200 px-7 py-2 transition-colors hover:bg-gray-300"

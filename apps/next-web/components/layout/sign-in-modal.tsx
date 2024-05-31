@@ -32,7 +32,7 @@ const SignInModal = ({
               height={20}
             />
           </a>
-          <h3 className="font-display text-2xl font-bold">Sign In</h3>
+          <h3 className="font-display text-2xl font-bold">Sign in to Tesior</h3>
           <p className="text-sm text-gray-500">
             Get your bounties for contributing to open source projects.
           </p>
@@ -56,7 +56,7 @@ const SignInModal = ({
             ) : (
               <>
                 <Github className="h-5 w-5" />
-                <p>Sign In with Github</p>
+                <p>Sign in with Github</p>
               </>
             )}
           </button>
@@ -80,6 +80,6 @@ export function useSignInModal() {
 
   return useMemo(
     () => ({ setShowSignInModal, SignInModal: SignInModalCallback }),
-    [setShowSignInModal, SignInModalCallback],
+    [setShowSignInModal, SignInModalCallback]
   );
 }
