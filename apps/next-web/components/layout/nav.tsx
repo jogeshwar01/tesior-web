@@ -4,13 +4,18 @@ import Image from "next/image";
 import { APP_DOMAIN, cn } from "@/lib/utils";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useSelectedLayoutSegment,
+} from "next/navigation";
 import { createContext } from "react";
 import { useScroll } from "@/lib/hooks";
 import { MaxWidthWrapper } from "../shared/max-width-wrapper";
 import { useSignInModal } from "./sign-in-modal";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
+import { motion } from "framer-motion";
 
 export type NavTheme = "light" | "dark";
 
@@ -25,7 +30,7 @@ export const navItems = [
   },
   {
     name: "Payments",
-    slug: "payment",
+    slug: "payments",
   },
   {
     name: "Wallet",
@@ -41,6 +46,7 @@ export function Nav({
   session: Session | null;
 }) {
   const { SignInModal, setShowSignInModal } = useSignInModal();
+  const pathname = usePathname();
 
   const { domain = APP_DOMAIN } = useParams() as {
     domain: string;
@@ -89,24 +95,47 @@ export function Nav({
                 className="relative hidden lg:block"
               >
                 <NavigationMenuPrimitive.List className="flex flex-row space-x-2 p-4">
-                  {navItems.map(({ name, slug }) => (
-                    <NavigationMenuPrimitive.Item key={slug} asChild>
-                      <Link
-                        id={`nav-${slug}`}
-                        key={slug}
-                        href={createHref(`/${slug}`)}
-                        className={cn(
-                          "rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors ease-out hover:text-black dark:text-black/50 dark:hover:text-black",
-                          {
-                            "text-black dark:text-black":
-                              selectedLayout === slug,
-                          }
-                        )}
-                      >
-                        {name}
-                      </Link>
-                    </NavigationMenuPrimitive.Item>
-                  ))}
+                  {navItems.map(({ name, slug }) => {
+                    const href = createHref(`/${slug}`);
+
+                    return (
+                      <NavigationMenuPrimitive.Item key={slug} asChild>
+                        <Link
+                          id={`nav-${slug}`}
+                          key={slug}
+                          href={href}
+                          className={cn(
+                            "rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors ease-out hover:text-black dark:text-black/50 dark:hover:text-black",
+                            {
+                              "text-black dark:text-black":
+                                selectedLayout === slug,
+                            }
+                          )}
+                        >
+                          <div className="m-1 rounded-md px-3 py-3 transition-all duration-75 hover:bg-gray-100 active:bg-gray-200">
+                            <p className="text-sm font-normal text-gray-700 hover:text-black">
+                              {name}
+                            </p>
+                          </div>
+                          {(pathname === href ||
+                            (href.endsWith("/settings") &&
+                              pathname?.startsWith(
+                                href
+                              ))) && (
+                            <motion.div
+                              layoutId="indicator"
+                              transition={{
+                                duration: 0.25,
+                              }}
+                              className="bottom-0 w-full pl-2 pr-1"
+                            >
+                              <div className="h-0.5 bg-black" />
+                            </motion.div>
+                          )}
+                        </Link>
+                      </NavigationMenuPrimitive.Item>
+                    );
+                  })}
                 </NavigationMenuPrimitive.List>
 
                 <NavigationMenuPrimitive.Viewport className="data-[state=closed]:animate-scale-out-content data-[state=open]:animate-scale-in-content absolute left-0 top-full flex w-[var(--radix-navigation-menu-viewport-width)] origin-[top_center] justify-start rounded-lg border border-gray-200 bg-white shadow-lg dark:border-white/[0.15] dark:bg-black" />
