@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Suspense } from "react";
 import Providers from "./providers";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "Tesior - Open Source Web3 Bounties",
@@ -21,6 +22,7 @@ export default async function RootLayout({
     <Providers>
       <html lang="en">
         <body className={cx(sfPro.variable, inter.variable)}>
+          <Toaster closeButton className="pointer-events-auto" />
           <div className="fixed h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-cyan-100 -z-10" />
           <Suspense fallback="...">
             <Navbar />
