@@ -37,3 +37,8 @@ export enum EntityType {
 export type CreateTaskInput = z.infer<typeof createTaskInput>;
 
 export type TaskInput = z.infer<typeof Task>;
+
+export type BalanceInput = {
+  pending_amount: number;
+  locked_amount: number;
+};

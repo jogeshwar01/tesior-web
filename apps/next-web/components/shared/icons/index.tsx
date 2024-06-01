@@ -8,3 +8,4 @@ export { default as Google } from "./google";
 export { default as BuyMeACoffee } from "./buymeacoffee";
 export { default as ThreeDots } from "./three-dots";
 export { default as Delete } from "./delete";
+export { default as Solana } from "./solana";

@@ -16,7 +16,7 @@ import { useSignInModal } from "./sign-in-modal";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 import { motion } from "framer-motion";
-
+import useBalance from "@/lib/swr/useBalance";
 export type NavTheme = "light" | "dark";
 
 export const NavContext = createContext<{ theme: NavTheme }>({
@@ -47,6 +47,7 @@ export function Nav({
 }) {
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const pathname = usePathname();
+  const { balance } = useBalance();
 
   const { domain = APP_DOMAIN } = useParams() as {
     domain: string;
@@ -119,9 +120,7 @@ export function Nav({
                           </div>
                           {(pathname === href ||
                             (href.endsWith("/settings") &&
-                              pathname?.startsWith(
-                                href
-                              ))) && (
+                              pathname?.startsWith(href))) && (
                             <motion.div
                               layoutId="indicator"
                               transition={{
@@ -140,6 +139,13 @@ export function Nav({
 
                 <NavigationMenuPrimitive.Viewport className="data-[state=closed]:animate-scale-out-content data-[state=open]:animate-scale-in-content absolute left-0 top-full flex w-[var(--radix-navigation-menu-viewport-width)] origin-[top_center] justify-start rounded-lg border border-gray-200 bg-white shadow-lg dark:border-white/[0.15] dark:bg-black" />
               </NavigationMenuPrimitive.Root>
+            </div>
+
+            <div className="absolute right-20 lg:right-44">
+              <Link className="flex flex-row z-10" href={`/wallet`}>
+                <Image src={"/solana.png"} alt={""} width={25} height={20} />
+                <div className="ml-2">{balance?.pending_amount}</div>
+              </Link>
             </div>
 
             <div className="hidden lg:block">
