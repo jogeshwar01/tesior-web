@@ -40,6 +40,11 @@ export async function GET() {
       where: {
         user_id: session.user.id,
       },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
     return NextResponse.json(tasks, { status: 200 });

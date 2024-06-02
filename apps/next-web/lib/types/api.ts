@@ -31,6 +31,14 @@ export enum EntityType {
   Admin = "Admin",
 }
 
+export const PaymentType = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  amount: z.number(),
+  signature: z.string(),
+  status: z.nativeEnum(TxnStatus),
+});
+
 //-------------------------------------------
 // FRONTEND
 
@@ -42,3 +50,5 @@ export type BalanceInput = {
   pending_amount: number;
   locked_amount: number;
 };
+
+export type PaymentInput = z.infer<typeof PaymentType>;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Edit3 } from "lucide-react";
-import { TaskInput } from "@/lib/types";
+import { TaskInput, TaskStatus } from "@/lib/types";
 import { ThreeDots, Delete } from "../shared/icons";
 import { Popover } from "@/components/shared";
 
@@ -9,16 +9,14 @@ import { FolderInput } from "lucide-react";
 // Props for TaskCard component
 interface TaskCardProps {
   task: TaskInput;
-  onEdit: () => void;
-  onApprove: (taskId: string) => void;
-  onReject: (taskId: string) => void;
+  handleStatus: (taskId: string, status: string) => void;
+  handlePayout: (taskId: string, amount: number) => void;
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({
   task,
-  onEdit,
-  onApprove,
-  onReject,
+  handleStatus,
+  handlePayout,
 }) => {
   const [openPopover, setOpenPopover] = useState(false);
 
@@ -31,7 +29,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         <div className="relative flex shrink space-x-10 items-center">
           <div>{task.title}</div>
           <div>{task.proof}</div>
-          <div >{task.amount}</div>
+          <div>{task.amount}</div>
+          <div>{task.status}</div>
           {/* 
             Here, we're manually setting ml-* values because if we do space-x-* in the parent div, 
             it messes up the tooltip positioning.
@@ -54,32 +53,42 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           <Popover
             content={
               <div className="w-full sm:w-48">
-                <div className="grid gap-px p-2">
-                  <button
-                    onClick={() => {
-                      setOpenPopover(false);
-                      onEdit();
-                    }}
-                    className="h-9 px-2 font-medium"
-                  ><Edit3 className="h-4 w-4" /> Edit</button>
-                </div>
                 <div className="border-t border-gray-200" />
                 <div className="grid gap-px p-2">
-                  <button
-                    onClick={() => {
-                      setOpenPopover(false);
-                      onApprove("Abc");
-                    }}
-                    className="h-9 px-2 font-medium"
-                  ><FolderInput className="h-4 w-4" />Transfer
-                  </button>
-                  <button
-                    onClick={() => {
-                      setOpenPopover(false);
-                      onReject("abc");
-                    }}
-                    className="h-9 px-2 font-medium"
-                  ><Delete className="h-4 w-4" /> Delete</button>
+                  {task.status === TaskStatus.Pending ? (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setOpenPopover(false);
+                          handleStatus(task.id, "Approved");
+                        }}
+                        className="h-9 px-2 font-medium"
+                      >
+                        <FolderInput className="h-4 w-4" />
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => {
+                          setOpenPopover(false);
+                          handleStatus(task.id, "Rejected");
+                        }}
+                        className="h-9 px-2 font-medium"
+                      >
+                        <Delete className="h-4 w-4" /> Reject
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setOpenPopover(false);
+                        handlePayout(task.id, task.amount);
+                      }}
+                      className="h-9 px-2 font-medium"
+                    >
+                      <FolderInput className="h-4 w-4" />
+                      Pay
+                    </button>
+                  )}
                 </div>
               </div>
             }

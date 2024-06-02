@@ -12,7 +12,7 @@ export async function PUT(
   const session = await getSession();
 
   if (!taskId) {
-    NextResponse.json(
+    return NextResponse.json(
       {
         error: "Task ID is required.",
       },
@@ -26,7 +26,7 @@ export async function PUT(
 
   // Check if the new status is a valid TaskStatus
   if (!Object.values(TaskStatus).includes(status)) {
-    NextResponse.json(
+    return NextResponse.json(
       {
         error:
           "Invalid status. Valid statuses are: Pending, Approved, Rejected, Paid.",
@@ -61,14 +61,14 @@ export async function PUT(
     });
 
     // If the transaction is successful, return the success response
-    NextResponse.json({
+    return NextResponse.json({
       message: "Task status updated and approval recorded successfully.",
       task: result.updatedTask,
       approval: result.newApproval,
     });
   } catch (error: any) {
     if (error.message === "Task not found.") {
-      NextResponse.json(
+      return NextResponse.json(
         {
           error: "Task not found.",
         },
@@ -77,7 +77,7 @@ export async function PUT(
         }
       );
     } else {
-      NextResponse.json(
+      return NextResponse.json(
         {
           error:
             "An error occurred while updating the task status: " +

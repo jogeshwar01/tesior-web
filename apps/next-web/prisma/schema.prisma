@@ -85,6 +85,8 @@ model Task {
   approval     Approval?
   user_id      String
   user         User         @relation(fields: [user_id], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt    @default(now())
 }
 
 model Approval {
@@ -94,6 +96,8 @@ model Approval {
   task_id       String      @unique
   task          Task        @relation(fields: [task_id], references: [id])
   status        TaskStatus
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt    @default(now())
 }
 
 model Transfer {
@@ -105,6 +109,8 @@ model Transfer {
   task_id         String    @unique
   task            Task      @relation(fields: [task_id], references: [id])
   amount          Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt    @default(now())
 }
 
 model Payment {
@@ -114,6 +120,8 @@ model Payment {
   amount        Int
   signature     String       @unique
   status        TxnStatus
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt   @default(now())
 }
 
 model Escrow {
@@ -123,6 +131,8 @@ model Escrow {
   amount        Int
   signature     String      @unique
   status        TxnStatus
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt    @default(now())
 }
 
 enum TxnStatus {

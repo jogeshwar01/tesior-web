@@ -1,24 +1,40 @@
 "use client";
 
 import React from "react";
+import { toast } from "sonner";
 import { useAddEditTaskModal } from "@/components/modals";
 import useTasks from "@/lib/swr/useTasks";
-import { TaskCard } from "@/components/task/TaskCard"
+import { TaskCard } from "@/components/task/TaskCard";
+import { mutate } from "swr";
 
 export default function CreateTaskPage() {
   const { setShowModal, AddEditTaskModal } = useAddEditTaskModal();
   const { tasks, error, loading } = useTasks();
-  
-  const handleEdit = () => {
-    console.log("Editing");
+
+  const handleStatus = async (taskId: string, status: string) => {
+    try {
+      const response = await fetch(`/api/admin/task/${taskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      const data = await response.json();
+
+      if (data.approval) {
+        mutate("/api/user/task");
+        toast.success("Task status updated successfully!");
+      } else {
+        toast.error("Failed to update task status");
+      }
+    } catch (error) {
+      console.error("Failed to update task status", error);
+      toast.error("Failed to update task status");
+    }
   };
 
-  const handleApprove = (taskId: string) => {
-    console.log("Approving", taskId);
-  };
-
-  const handleReject = (taskId: string) => {
-    console.log("Rejecting", taskId);
+  const handlePayout = async (taskId: string, amount: number) => {
+    console.log("Payout task", taskId, "with amount", amount);
   };
 
   if (error) return <div>Failed to load tasks</div>;
@@ -37,9 +53,8 @@ export default function CreateTaskPage() {
               <TaskCard
                 key={task.id}
                 task={task}
-                onEdit={handleEdit}
-                onApprove={handleApprove}
-                onReject={handleReject}
+                handleStatus={handleStatus}
+                handlePayout={handlePayout}
               />
             ))}
         </ul>
