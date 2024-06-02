@@ -12,7 +12,6 @@ import {
 import { createContext } from "react";
 import { useScroll } from "@/lib/hooks";
 import { MaxWidthWrapper } from "../shared";
-import { useSignInModal } from "./sign-in-modal";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 import { motion } from "framer-motion";
@@ -45,7 +44,6 @@ export function Nav({
   theme?: NavTheme;
   session: Session | null;
 }) {
-  const { SignInModal, setShowSignInModal } = useSignInModal();
   const pathname = usePathname();
   const { balance } = useBalance();
 
@@ -149,17 +147,16 @@ export function Nav({
             </div>
 
             <div className="hidden lg:block">
-              <SignInModal />
               <div>
                 {session ? (
                   <UserDropdown session={session} />
                 ) : (
-                  <button
+                  <Link
                     className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                    onClick={() => setShowSignInModal(true)}
+                    href="/login"
                   >
                     Sign In
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>

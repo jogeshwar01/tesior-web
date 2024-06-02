@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { navItems, type NavTheme } from "./nav";
-import { useSignInModal } from "./sign-in-modal";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 
@@ -17,8 +16,6 @@ export function NavMobile({
   theme?: NavTheme;
   session: Session | null;
 }) {
-  const { SignInModal, setShowSignInModal } = useSignInModal();
-
   const { domain = APP_DOMAIN } = useParams() as { domain: string };
   const [open, setOpen] = useState(false);
 
@@ -68,18 +65,17 @@ export function NavMobile({
             </li>
           ))}
 
-          <SignInModal />
           <div>
             <li className="py-3">
               {session ? (
                 <UserDropdown session={session} />
               ) : (
-                <button
+                <Link
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  onClick={() => setShowSignInModal(true)}
+                  href="/login"
                 >
                   Sign In
-                </button>
+                </Link>
               )}
             </li>
           </div>
