@@ -17,6 +17,7 @@ model User {
   pending_amount      Int             @default(0)
   locked_amount       Int             @default(0)
 
+  wallets             Wallet[]
   accounts            Account[]
   sessions            Session[]
   tasks               Task[]
@@ -72,6 +73,17 @@ model VerificationToken {
   expires    DateTime
  
   @@id([identifier, token])
+}
+
+model Wallet {
+  id            String      @id @default(uuid())
+  user_id       String
+  user          User        @relation(fields: [user_id], references: [id])
+  publicKey     String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt    @default(now())
+
+  @@unique([user_id, publicKey])
 }
 
 model Task {
