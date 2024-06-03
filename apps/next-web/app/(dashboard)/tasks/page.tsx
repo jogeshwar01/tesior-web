@@ -33,8 +33,27 @@ export default function CreateTaskPage() {
     }
   };
 
-  const handlePayout = async (taskId: string, amount: number) => {
-    console.log("Payout task", taskId, "with amount", amount);
+  const handleTransfer = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/admin/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId }),
+      });
+
+      const data = await response.json();
+
+      if (data.admin) {
+        mutate("/api/user/task");
+        mutate("/api/user/balance");
+        toast.success("Task paid successfully!");
+      } else {
+        toast.error("Failed to pay for task");
+      }
+    } catch (error) {
+      console.error("Failed to pay for task", error);
+      toast.error("Failed to pay for task");
+    }
   };
 
   if (error) return <div>Failed to load tasks</div>;
@@ -54,7 +73,7 @@ export default function CreateTaskPage() {
                 key={task.id}
                 task={task}
                 handleStatus={handleStatus}
-                handlePayout={handlePayout}
+                handleTransfer={handleTransfer}
               />
             ))}
         </ul>
