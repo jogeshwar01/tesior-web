@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* solana wallet adaptor custom styles */
+.wallet-adapter-button {
+  height: 35px !important;
+  color: black !important;
+  background-color: rgb(229, 231, 235) !important;
+}
+
+.wallet-adapter-button:hover {
+  background-color: black !important;
+  color: white !important;
+}
+
+.wallet-adapter-modal-title {
+  background-color: rgb(229, 231, 235) !important;
+  border-radius: 10px !important;
+  color: black !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background-color: rgb(229, 231, 235) !important;
+  padding-bottom: 20px;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: darkgrey !important;
+}
+
+.wallet-adapter-dropdown-list {
+  background-color: rgb(229, 231, 235) !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  color: black !important;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  color: white !important;
+}

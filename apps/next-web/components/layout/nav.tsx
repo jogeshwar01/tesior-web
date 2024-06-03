@@ -16,6 +16,8 @@ import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 import { motion } from "framer-motion";
 import useBalance from "@/lib/swr/useBalance";
+import { usePublicKey } from "@/lib/hooks/use-public-key";
+
 export type NavTheme = "light" | "dark";
 
 export const NavContext = createContext<{ theme: NavTheme }>({
@@ -55,6 +57,8 @@ export function Nav({
 
   const scrolled = useScroll(80);
   const selectedLayout = useSelectedLayoutSegment();
+
+  const { WalletMultiButtonDynamic } = usePublicKey();
 
   return (
     <NavContext.Provider value={{ theme }}>
@@ -137,14 +141,17 @@ export function Nav({
 
                 <NavigationMenuPrimitive.Viewport className="data-[state=closed]:animate-scale-out-content data-[state=open]:animate-scale-in-content absolute left-0 top-full flex w-[var(--radix-navigation-menu-viewport-width)] origin-[top_center] justify-start rounded-lg border border-gray-200 bg-white shadow-lg dark:border-white/[0.15] dark:bg-black" />
               </NavigationMenuPrimitive.Root>
-            </div>
-
-            <div className="absolute right-20 lg:right-44">
               <Link className="flex flex-row z-10" href={`/wallet`}>
                 <Image src={"/solana.png"} alt={""} width={25} height={20} />
                 <div className="ml-2">{balance?.pending_amount}</div>
               </Link>
             </div>
+
+            {session && (
+              <div className="absolute right-16 lg:block lg:right-40">
+                <WalletMultiButtonDynamic />
+              </div>
+            )}
 
             <div className="hidden lg:block">
               <div>
