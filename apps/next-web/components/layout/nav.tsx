@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { APP_DOMAIN, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { APP_DOMAIN } from "@/lib/utils/constants";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
 import {
@@ -160,7 +161,7 @@ export function Nav({
                 ) : (
                   <Link
                     className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                    href="/login"
+                    href={`${APP_DOMAIN}/login`}
                   >
                     Sign In
                   </Link>

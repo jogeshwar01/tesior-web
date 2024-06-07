@@ -1,6 +1,7 @@
 "use client";
 
-import { APP_DOMAIN, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { APP_DOMAIN } from "@/lib/utils/constants";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -72,8 +73,8 @@ export function NavMobile({
               ) : (
                 <Link
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  href="/login"
-                >
+                  href={`${APP_DOMAIN}/login`}
+                  >
                   Sign In
                 </Link>
               )}
