@@ -9,6 +9,7 @@ import {
 } from "react";
 import { LoadingDots, Github } from "@/components/shared/icons";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 const SignInModal = ({
   showSignInModal,
@@ -18,6 +19,8 @@ const SignInModal = ({
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [signInClicked, setSignInClicked] = useState(false);
+  const searchParams = useSearchParams();
+  const next = searchParams?.get("next");
 
   return (
     <Modal showModal={showSignInModal} setShowModal={setShowSignInModal}>
@@ -48,7 +51,9 @@ const SignInModal = ({
             } flex h-10 w-full items-center justify-center space-x-3 rounded-md border text-sm shadow-sm transition-all duration-75 focus:outline-none`}
             onClick={() => {
               setSignInClicked(true);
-              signIn("github");
+              signIn("github", {
+                ...(next && next.length > 0 ? { callbackUrl: next } : {}),
+              });
             }}
           >
             {signInClicked ? (

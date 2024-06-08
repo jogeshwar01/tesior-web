@@ -19,19 +19,31 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   // need to add strategy to jwt else will get jwt from database (won't go inside jwt callback)
   // for adapters, default is database else default is jwt
-  // session: {
-  //   strategy: "jwt",
-  // },
+  // need this to use getToken in nextjs middleware to get next auth jwt
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session: async ({ session, user }) => {
+    // need this for getting token in middleware (as now we're using jwt strategy)
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        // @ts-ignore
+        token.role = user.role;
+      }
+
+      return token;
+    },
+    session: async ({ session, token }) => {
       session.user = {
         ...session.user,
-        id: user.id,
+        id: token.id as string,
         // @ts-ignore
-        role: user.role,
+        role: token.role,
       };
 
       return session;

@@ -4,9 +4,12 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { LoadingDots, Github } from "@/components/shared/icons";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const [signInClicked, setSignInClicked] = useState(false);
+  const searchParams = useSearchParams();
+  const next = searchParams?.get("next");
 
   return (
     <div className="w-full overflow-hidden shadow-xl md:max-w-md md:rounded-2xl md:border md:border-gray-200">
@@ -39,7 +42,7 @@ export default function LoginForm() {
             // The callbackUrl specifies to which URL the user will be redirected after signing in.
             // Defaults to the page URL the sign-in is initiated from.
             signIn("github", {
-              callbackUrl: `/`,
+              ...(next && next.length > 0 ? { callbackUrl: next } : {}),
             });
           }}
         >
