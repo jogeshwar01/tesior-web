@@ -15,4 +15,17 @@ module.exports = {
       },
     ];
   },
+  // need to add this for the instrumentation hook to work
+  experimental: {
+    instrumentationHook: true,
+  },
+  // to ignore import trace warnings in console => ../../node_modules/bullmq/dist/esm/classes/child-processor.js
+  // Critical dependency: the request of a dependency is an expression. Import trace for requested module:
+  webpack: config => {             // can ignore as everything is working fine
+    config.ignoreWarnings = [
+      { module: /node_modules\/bullmq\/dist\/esm\/classes\/child-processor\.js/ },
+      { file: /node_modules\/bullmq\/dist\/esm\/classes\/child-processor\.js/ },
+    ];
+    return config;
+  }
 };
