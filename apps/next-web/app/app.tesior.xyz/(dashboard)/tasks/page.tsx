@@ -1,83 +1,30 @@
 "use client";
 
-import React from "react";
-import { toast } from "sonner";
-import { useAddEditTaskModal } from "@/components/modals";
+import { columns } from "@/components/table/task/columns";
+import { DataTable } from "@/components/table/task/data-table";
 import useTasks from "@/lib/swr/useTasks";
-import { TaskCard } from "@/components/task/TaskCard";
-import { mutate } from "swr";
+import z from "zod";
+import { Task } from "@/lib/types";
 
-export default function CreateTaskPage() {
-  const { setShowModal, AddEditTaskModal } = useAddEditTaskModal();
-  const { tasks, error, loading } = useTasks();
-
-  const handleStatus = async (taskId: string, status: string) => {
-    try {
-      const response = await fetch(`/api/admin/task/${taskId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-
-      const data = await response.json();
-
-      if (data.approval) {
-        mutate("/api/user/task");
-        toast.success("Task status updated successfully!");
-      } else {
-        toast.error("Failed to update task status");
-      }
-    } catch (error) {
-      console.error("Failed to update task status", error);
-      toast.error("Failed to update task status");
-    }
-  };
-
-  const handleTransfer = async (taskId: string) => {
-    try {
-      const response = await fetch(`/api/admin/transfer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ taskId }),
-      });
-
-      const data = await response.json();
-
-      if (data.admin) {
-        mutate("/api/user/task");
-        mutate("/api/user/balance");
-        toast.success("Task paid successfully!");
-      } else {
-        toast.error("Failed to pay for task");
-      }
-    } catch (error) {
-      console.error("Failed to pay for task", error);
-      toast.error("Failed to pay for task");
-    }
-  };
+export default function TaskPage() {
+  const { tasks: data, error, loading } = useTasks();
 
   if (error) return <div>Failed to load tasks</div>;
   if (loading) return <div>Loading...</div>;
 
-  return (
-    <div className="w-full">
-      <button onClick={() => setShowModal(true)}>Create/Edit Task</button>
-      <AddEditTaskModal />
+  const tasks = z.array(Task).parse(data);
 
-      <div className="col-span-full lg:col-span-8">
-        <ul className="grid min-h-[66.5vh] grid-cols-16 gap-3 p-4">
-          {tasks &&
-            tasks.length > 0 &&
-            tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                handleStatus={handleStatus}
-                handleTransfer={handleTransfer}
-              />
-            ))}
-        </ul>
+  return (
+    <div className="hidden h-full w-[70%] flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+          <p className="text-muted-foreground">
+            Here&apos;s a list of your contributions.
+          </p>
+        </div>
       </div>
+      <DataTable data={tasks} columns={columns} />
     </div>
   );
 }
