@@ -1,25 +1,30 @@
 "use client";
 
-import React from "react";
-import usePayments from "@/lib/swr/usePayments"
+import { columns } from "@/components/table/payment/columns";
+import { DataTable } from "@/components/table/payment/data-table";
+import z from "zod";
+import { Payment } from "@/lib/types";
+import usePayments from "@/lib/swr/usePayments";
 
-export default function CreateTaskPage() {
-  const { payments, error, loading } = usePayments();
+export default function PaymentPage() {
+  const { payments: data, error, loading } = usePayments();
 
   if (error) return <div>Failed to load payments</div>;
   if (loading) return <div>Loading...</div>;
 
-  return (
-    <div className="flex">
-      {
-        payments?.map((payment) => (
-          <div key={payment.id}>
-            <h1>{payment.amount}</h1>
-            <p>{payment.user_id}</p>
-          </div>
-        ))
-      }
+  const payments = z.array(Payment).parse(data);
 
+  return (
+    <div className="hidden h-full w-[75%] flex-1 flex-col space-y-8 p-8 md:flex">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Payments!</h2>
+          <p className="text-muted-foreground">
+            Here&apos;s a list of the payments you have received.
+          </p>
+        </div>
+      </div>
+      <DataTable data={payments} columns={columns} />
     </div>
   );
 }

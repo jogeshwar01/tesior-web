@@ -35,6 +35,10 @@ export const navItems = [
     slug: "payments",
   },
   {
+    name: "Transfers",
+    slug: "transfers",
+  },
+  {
     name: "Wallet",
     slug: "wallet",
   },
