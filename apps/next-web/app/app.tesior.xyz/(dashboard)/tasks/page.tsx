@@ -5,9 +5,12 @@ import { DataTable } from "@/components/table/task/data-table";
 import useTasks from "@/lib/swr/useTasks";
 import z from "zod";
 import { Task } from "@/lib/types";
+import { useAddEditTaskModal } from "@/components/modals";
+import { Button } from "@/components/ui/new-york/button";
 
 export default function TaskPage() {
   const { tasks: data, error, loading } = useTasks();
+  const { setShowModal, AddEditTaskModal } = useAddEditTaskModal();
 
   if (error) return <div>Failed to load tasks</div>;
   if (loading) return <div>Loading...</div>;
@@ -22,6 +25,16 @@ export default function TaskPage() {
           <p className="text-muted-foreground">
             Here&apos;s a list of your contributions.
           </p>
+        </div>
+        <div>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowModal(true)}
+          >
+            Add Task
+          </Button>
+          <AddEditTaskModal />
         </div>
       </div>
       <DataTable data={tasks} columns={columns} />
