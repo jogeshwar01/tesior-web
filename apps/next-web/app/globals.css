@@ -112,3 +112,18 @@
 .wallet-adapter-dropdown-list-item:hover {
   color: white !important;
 }
+
+/* Implement a custom scrollbar to preventing ugly looking scroll-overflows */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d1d5db;
+	border-radius: 10px;
+}
