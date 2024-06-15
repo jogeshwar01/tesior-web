@@ -1,7 +1,7 @@
 import { parse } from "@/lib/middleware/utils";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { APP_DOMAIN } from "@/lib/utils/constants";
 
 export default async function AdminMiddleware(req: NextRequest) {
   const { path } = parse(req);
@@ -17,16 +17,15 @@ export default async function AdminMiddleware(req: NextRequest) {
     role?: string;
   };
 
+  // using a fetch call as prisma is not available in middleware
+  // as middleware only supports edge runtime and not node runtime
   if (sessionUser?.id) {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: sessionUser.id,
-      },
-    });
+    const response = await fetch(
+      APP_DOMAIN + `/api/database/admin?userId=${sessionUser.id}`
+    );
 
-    if (user) {
-      isAdmin = user.role === "admin";
-    }
+    const data = await response.json();
+    isAdmin = data?.isAdmin;
   }
 
   if (path === "/login" && isAdmin) {
