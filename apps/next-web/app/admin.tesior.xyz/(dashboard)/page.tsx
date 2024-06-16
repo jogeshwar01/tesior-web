@@ -19,14 +19,14 @@ export default async function Home() {
           className="animate-fade-up bg-gradient-to-br from-black to-stone-500 bg-clip-text text-center font-display text-4xl font-bold tracking-[-0.02em] text-transparent opacity-0 drop-shadow-sm [text-wrap:balance] md:text-7xl md:leading-[5rem]"
           style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
         >
-          Open Source Web3 Bounties
+          Welcome to Tesior Admin
         </h1>
         <p
           className="mt-6 animate-fade-up text-center text-gray-500 opacity-0 [text-wrap:balance] md:text-xl"
           style={{ animationDelay: "0.25s", animationFillMode: "forwards" }}
         >
-          An open souce web3 bounty app that allows maintainers to reward
-          contributors via crypto.
+          Add Crypto to your Tesior wallet.
+          Keep track of contributors and pay for their tasks.
         </p>
         <div
           className="mx-auto mt-6 flex animate-fade-up items-center justify-center space-x-5 opacity-0"
@@ -45,7 +45,6 @@ export default async function Home() {
           </a>
         </div>
       </div>
-      <div className="z-10 mt-20">Content here</div>
     </>
   );
 }
