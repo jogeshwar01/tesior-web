@@ -24,9 +24,9 @@ export default function PaymentPage() {
       <div className="hidden h-full w-[75%] flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Received!</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Sent!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of the Transfers you have received.
+              Here&apos;s a list of the Transfers you have sent.
             </p>
           </div>
         </div>
@@ -36,9 +36,9 @@ export default function PaymentPage() {
       <div className="hidden h-full w-[75%] flex-1 flex-col space-y-8 p-8 pt-10 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Sent!</h2>
+            <h2 className="text-2xl font-bold tracking-tight">Received!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of the Transfers you have sent.
+              Here&apos;s a list of the Transfers you have received.
             </p>
           </div>
         </div>

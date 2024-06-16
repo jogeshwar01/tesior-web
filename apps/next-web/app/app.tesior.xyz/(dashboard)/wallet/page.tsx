@@ -7,13 +7,15 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const PARENT_WALLET_ADDRESS =
   process.env.PARENT_WALLET_ADDRESS ??
   "GaCqPZyUbEWHvUHq821qqDxG2YofznCrA5B6sW7MfZRs";
-const TOTAL_DECIMALS = parseInt(process.env.TOTAL_DECIMALS ?? '1000000000');
+const TOTAL_DECIMALS = parseInt(process.env.TOTAL_DECIMALS ?? "1000000000");
 
 export default function Wallet() {
+  const session = useSession();
   const { balance, error, loading } = useBalance();
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
@@ -67,7 +69,7 @@ export default function Wallet() {
 
   async function withdraw() {
     try {
-      const response = await fetch(`/api/user/payout`, {
+      const response = await fetch(`/api/user/payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -94,9 +96,13 @@ export default function Wallet() {
             <Solana />
             <div className="mx-5 text-2xl">{balance?.pending_amount || 0}</div>
           </div>
-          <div className="flex">
-            <button className="mr-10" onClick={withdraw}>Withdraw</button>
-            <button onClick={deposit}>Deposit</button>
+          <div className="flex justify-center">
+            <button onClick={withdraw}>
+              Withdraw
+            </button>
+            {session?.data?.user?.role === "admin" && (
+              <button className="ml-10" onClick={deposit}>Deposit</button>
+            )}
           </div>
         </div>
       ),

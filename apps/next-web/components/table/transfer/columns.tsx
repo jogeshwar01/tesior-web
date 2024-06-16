@@ -19,7 +19,7 @@ export const columns: ColumnDef<TransferInput>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "sender",
+    accessorKey: "sender_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sender" />
     ),
@@ -34,7 +34,7 @@ export const columns: ColumnDef<TransferInput>[] = [
     },
   },
   {
-    accessorKey: "receiver",
+    accessorKey: "receiver_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Receiver" />
     ),

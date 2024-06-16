@@ -5,7 +5,7 @@ import { TransferInput } from "../types";
 type Transfer = 'sent' | 'received';
 
 export default function useTransfers(sentOrReceived: Transfer) {
-  const { data: transfers, error } = useSWR<TransferInput[]>(`/api/user/transfer?tranfer=${sentOrReceived}`, fetcher);
+  const { data: transfers, error } = useSWR<TransferInput[]>(`/api/user/transfer?transfer=${sentOrReceived}`, fetcher);
 
   return {
     transfers: transfers,

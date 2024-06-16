@@ -15,6 +15,7 @@ import {
 import { Task, TaskStatus } from "@/lib/types";
 import { mutate } from "swr";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -24,6 +25,7 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const task = Task.parse(row.original);
+  const session = useSession();
 
   const handleStatus = async (taskId: string, status: string) => {
     try {
@@ -60,6 +62,7 @@ export function DataTableRowActions<TData>({
       if (data.admin) {
         mutate("/api/user/task");
         mutate("/api/user/balance");
+        mutate("/api/admin/transfer");
         toast.success("Task paid successfully!");
       } else {
         toast.error("Failed to pay for task");
@@ -71,52 +74,56 @@ export function DataTableRowActions<TData>({
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        {task.status === TaskStatus.Pending ? (
-          <div>
-            <DropdownMenuItem
-              onClick={() => {
-                handleStatus(task.id, "Approved");
-              }}
+    <>
+      {session?.data?.user?.role === "admin" && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
             >
-              Approve
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                handleStatus(task.id, "Rejected");
-              }}
-            >
-              Reject
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+              <DotsHorizontalIcon className="h-4 w-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[160px]">
+            {task.status === TaskStatus.Pending ? (
+              <div>
+                <DropdownMenuItem
+                  onClick={() => {
+                    handleStatus(task.id, "Approved");
+                  }}
+                >
+                  Approve
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    handleStatus(task.id, "Rejected");
+                  }}
+                >
+                  Reject
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              Delete
-              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </div>
-        ) : task.status === TaskStatus.Approved ? (
-          <DropdownMenuItem
-            onClick={() => {
-              handleTransfer(task.id);
-            }}
-          >
-            Pay
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem>{task.status}</DropdownMenuItem>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+                <DropdownMenuItem>
+                  Delete
+                  <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </div>
+            ) : task.status === TaskStatus.Approved ? (
+              <DropdownMenuItem
+                onClick={() => {
+                  handleTransfer(task.id);
+                }}
+              >
+                Pay
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem>{task.status}</DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </>
   );
 }

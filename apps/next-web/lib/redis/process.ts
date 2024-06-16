@@ -23,60 +23,68 @@ export const processUserPaymentQueue = async (job: {
 
   console.log("\nInitializing Payout Transaction");
 
-  await prisma.$transaction(async (tx: any) => {
-    const user = await tx.user.findUnique({
-      where: { id: userId },
-    });
-
-    const wallet = await tx.wallet.findFirst({
-      where: { user_id: userId, },
-    });
-
-    let signature: string;
-    try {
-      if (!user || !wallet) {
-        throw new Error("User or Public Key Not Found");
-      }
-      if (!PARENT_WALLET_ADDRESS) {
-        throw new Error("Set parent public key");
-      }
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
-          toPubkey: new PublicKey(wallet.publicKey),
-          lamports: user.locked_amount,
-        })
-      );
-
-      const keypair = recoverPrivateKey(await fetchShares());
-
-      signature = await sendAndConfirmTransaction(connection, transaction, [
-        keypair,
-      ]);
-      console.log(
-        `User ${userId} was payed, ${user.locked_amount} lamports, signature: ${signature}`
-      );
-    } catch (error) {
-      console.log((error as Error).message);
-      return;
-    }
-    await tx.user.update({
-      where: { id: userId },
-      data: { locked_amount: { decrement: user.locked_amount } },
-    });
-
-    await tx.payment.create({
-      data: {
-        user_id: userId,
-        amount: user.locked_amount,
-        status: TxnStatus.Success,
-        signature: signature,
-      },
-    }),
-      console.log(
-        "User's locked amount and payout is cleared, Transaction Successful.\n"
-      );
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
   });
+
+  const wallet = await prisma.wallet.findFirst({
+    where: { user_id: userId },
+  });
+
+  let signature: string;
+  try {
+    if (!user || !wallet) {
+      throw new Error("User or Public Key Not Found");
+    }
+    if (!PARENT_WALLET_ADDRESS) {
+      throw new Error("Set parent public key");
+    }
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
+        toPubkey: new PublicKey(wallet.publicKey),
+        lamports: user.locked_amount,
+      })
+    );
+
+    const keypair = recoverPrivateKey(await fetchShares());
+
+    signature = await sendAndConfirmTransaction(connection, transaction, [
+      keypair,
+    ]);
+    console.log(
+      `User ${userId} was payed, ${user.locked_amount} lamports, signature: ${signature}`
+    );
+  } catch (error) {
+    console.log((error as Error).message);
+    return;
+  }
+
+  await prisma.$transaction(
+    async (tx: any) => {
+      await tx.user.update({
+        where: { id: userId },
+        data: { locked_amount: { decrement: user.locked_amount } },
+      });
+
+      await tx.payment.create({
+        data: {
+          user_id: userId,
+          amount: user.locked_amount,
+          status: TxnStatus.Success,
+          signature: signature,
+        },
+      }),
+        console.log(
+          "User's locked amount and payout is cleared, Transaction Successful.\n"
+        );
+    },
+    {
+      maxWait: 5000, // default: 2000
+      timeout: 30000, // default: 5000
+      isolationLevel: "Serializable",
+    }
+  );
 };
 
 export const processAdminEscrowQueue = async (job: {
@@ -85,7 +93,7 @@ export const processAdminEscrowQueue = async (job: {
 }) => {
   const { adminId, amount, signature } = job.data;
   console.log("\nInitializing Admin Escrow Transaction");
-  
+
   const admin = await prisma.user.findUnique({
     where: {
       id: adminId,
@@ -98,7 +106,7 @@ export const processAdminEscrowQueue = async (job: {
     },
   });
 
-  if(!admin || !wallet) {
+  if (!admin || !wallet) {
     throw new Error("Admin or Public Key Not Found");
   }
 
@@ -165,6 +173,8 @@ export const processAdminEscrowQueue = async (job: {
         },
       }),
     ]);
+
+    console.log("Admin Escrow Transaction Successful.\n");
   } catch (error) {
     console.log((error as Error).message);
     return;

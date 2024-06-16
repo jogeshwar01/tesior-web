@@ -45,6 +45,12 @@ export async function POST() {
         }
         const amount = user.pending_amount;
 
+        if (user.locked_amount > 0) {
+          throw new Error(
+            "You already have a pending payout. Please wait for it to be processed."
+          );
+        }
+
         await tx.user.update({
           where: {
             id: userId,
