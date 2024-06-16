@@ -9,9 +9,10 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
       profile(profile) {
+        // profile.login contains the GitHub username
         return {
           id: profile.id.toString(),
-          name: profile.name ?? profile.login,
+          name: profile.login,
           email: profile.email,
           image: profile.avatar_url,
           role: "user",

@@ -18,6 +18,9 @@ export const Task = createTaskInput.extend({
   id: z.string(),
   status: z.nativeEnum(TaskStatus),
   user_id: z.string(),
+  user: z.object({
+    name: z.string(),
+  }),
 });
 
 export enum TxnStatus {
@@ -38,6 +41,8 @@ export const Payment = z.object({
   signature: z.string(),
   status: z.nativeEnum(TxnStatus),
 });
+
+export const Escrow = Payment;
 
 export const Transfer = z.object({
   id: z.string(),

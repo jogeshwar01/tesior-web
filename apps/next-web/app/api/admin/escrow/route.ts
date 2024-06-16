@@ -1,6 +1,24 @@
 import { getSession } from "@/lib/auth/session";
 import { adminEscrowQueue } from "@/lib/redis/queues";
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+
+// Get all user escrows
+export async function GET() {
+  try {
+    const session = await getSession();
+
+    const escrows = await prisma.escrow.findMany({
+      where: {
+        user_id: session.user.id,
+      },
+    });
+
+    return NextResponse.json(escrows, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(error.message, { status: 500 });
+  }
+}
 
 // Create Escrow payment by admin
 export async function POST(req: NextRequest) {

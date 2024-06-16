@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/new-york/badge";
-import { Checkbox } from "@/components/ui/new-york/checkbox";
 
 import { TaskInput } from "@/lib/types";
 import { DataTableColumnHeader } from "../common/data-table-column-header";
@@ -34,39 +33,26 @@ export const statuses = [
 
 export const columns: ColumnDef<TaskInput>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value: any) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Task" />
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">
-        {(row.getValue("id") as string)?.substring(0, 8)}
+        {(row.getValue('id') as string).substring(0, 8)}
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Username" />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px]">
+        {(row.original.user.name as string)}
       </div>
     ),
     enableSorting: false,

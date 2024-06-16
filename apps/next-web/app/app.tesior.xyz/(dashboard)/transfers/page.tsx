@@ -7,7 +7,7 @@ import { Transfer } from "@/lib/types";
 import useTransfers from "@/lib/swr/useTransfers";
 
 export default function PaymentPage() {
-  const { transfers: data, error, loading } = useTransfers();
+  const { transfers: data, error, loading } = useTransfers('received');
 
   if (error) return <div>Failed to load transfers</div>;
   if (loading) return <div>Loading...</div>;

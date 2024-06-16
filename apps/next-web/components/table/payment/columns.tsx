@@ -1,10 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
 import { Badge } from "@/components/ui/new-york/badge";
-import { Checkbox } from "@/components/ui/new-york/checkbox";
-
 import { PaymentInput } from "@/lib/types";
 import { DataTableColumnHeader } from "../common/data-table-column-header";
 
@@ -27,32 +24,6 @@ export const statuses = [
 ];
 
 export const columns: ColumnDef<PaymentInput>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value: any) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "id",
     header: ({ column }) => (

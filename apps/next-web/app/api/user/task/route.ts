@@ -35,17 +35,26 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const session = await getSession();
+    // admin can view all tasks
+    const user_id = session.user.role != 'admin' ? session.user.id: undefined;
 
     const tasks = await prisma.task.findMany({
       where: {
-        user_id: session.user.id,
+        user_id: user_id,  
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
       },
       orderBy: [
         {
           createdAt: "desc",
         },
       ],
-    });
+    });  
 
     return NextResponse.json(tasks, { status: 200 });
   } catch (error: any) {

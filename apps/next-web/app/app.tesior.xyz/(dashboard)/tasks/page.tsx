@@ -23,7 +23,7 @@ export default function TaskPage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Tasks!</h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of your contributions.
+            Here&apos;s a list of contributions.
           </p>
         </div>
         <div>
