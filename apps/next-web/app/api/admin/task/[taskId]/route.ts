@@ -57,13 +57,12 @@ export async function PUT(
         },
       });
 
-      return { updatedTask, newApproval };
+      return { newApproval };
     });
 
     // If the transaction is successful, return the success response
     return NextResponse.json({
       message: "Task status updated and approval recorded successfully.",
-      task: result.updatedTask,
       approval: result.newApproval,
     });
   } catch (error: any) {

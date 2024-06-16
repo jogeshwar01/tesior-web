@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { userPayoutQueue } from "@/lib/redis/queues";
 import { getSession } from "@/lib/auth/session";
+import { lamportsToSol } from "@/lib/utils/solana";
 
 // Get all user payments
 export async function GET() {
@@ -12,9 +13,21 @@ export async function GET() {
       where: {
         user_id: session.user.id,
       },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
-    return NextResponse.json(payments, { status: 200 });
+    const newPayments = payments.map((payment) => {
+      return {
+        ...payment,
+        amount: lamportsToSol(payment.amount),
+      };
+    });
+
+    return NextResponse.json(newPayments, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(error.message, { status: 500 });
   }

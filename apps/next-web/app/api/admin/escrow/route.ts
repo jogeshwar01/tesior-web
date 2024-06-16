@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth/session";
 import { adminEscrowQueue } from "@/lib/redis/queues";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { lamportsToSol, solToLamports } from "@/lib/utils/solana";
 
 // Get all user escrows
 export async function GET() {
@@ -12,9 +13,21 @@ export async function GET() {
       where: {
         user_id: session.user.id,
       },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
-    return NextResponse.json(escrows, { status: 200 });
+    const newEscrows = escrows.map((escrow) => {
+      return {
+        ...escrow,
+        amount: lamportsToSol(escrow.amount),
+      };
+    });
+
+    return NextResponse.json(newEscrows, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(error.message, { status: 500 });
   }
@@ -37,7 +50,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await adminEscrowQueue.add("process-queue", { adminId, amount, signature });
+    await adminEscrowQueue.add("process-queue", {
+      adminId,
+      amount,
+      signature,
+    });
 
     return NextResponse.json(
       { message: "Escrow creation initiated. It will be processed shortly" },

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { lamportsToSol } from "@/lib/utils/solana";
 import { NextRequest, NextResponse } from "next/server";
 
 // Get tasks (all or based on userId)
@@ -11,9 +12,22 @@ export async function GET(req: NextRequest) {
       where: {
         user_id: userId,
       },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
     });
 
-    return NextResponse.json(tasks, { status: 200 });
+    // fix bigint type - not serializable on frontend, so convert to number
+    const newTasks = tasks.map((task) => {
+      return {
+        ...task,
+        amount: lamportsToSol(task.amount),
+      };
+    });
+
+    return NextResponse.json(newTasks, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(error.message, { status: 500 });
   }

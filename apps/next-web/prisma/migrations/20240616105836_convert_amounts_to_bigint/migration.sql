@@ -1,0 +1,18 @@
+-- AlterTable
+ALTER TABLE "Account" ALTER COLUMN "expires_at" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "Escrow" ALTER COLUMN "amount" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "Payment" ALTER COLUMN "amount" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "Task" ALTER COLUMN "amount" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "Transfer" ALTER COLUMN "amount" SET DATA TYPE BIGINT;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "locked_amount" SET DATA TYPE BIGINT,
+ALTER COLUMN "pending_amount" SET DATA TYPE BIGINT;

@@ -175,12 +175,12 @@ export function AddEditTaskModal({
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount ($) </FormLabel>
+                <FormLabel>Amount (SOL) </FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     min="0"
-                    step="1"
+                    step="0.01"
                     placeholder="0"
                     {...field}
                     onChange={(event) =>

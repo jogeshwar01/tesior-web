@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
   const { user_id, amount } = task;
 
-  if (!user_id || (!amount && amount !== 0)) {
+  if (!user_id || (!amount && amount !== BigInt(0))) {
     return new Response("User ID and Amount are required.", { status: 411 });
   }
 
@@ -64,12 +64,12 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (prisma: any) => {
       await prisma.user.update({
         where: { id: user_id },
-        data: { pending_amount: user.pending_amount + Number(amount) },
+        data: { pending_amount: user.pending_amount + BigInt(amount) },
       });
 
       const updatedAdmin = await prisma.user.update({
         where: { id: adminId },
-        data: { pending_amount: admin.pending_amount - Number(amount) },
+        data: { pending_amount: admin.pending_amount - BigInt(amount) },
       });
 
       await prisma.task.update({
@@ -82,18 +82,15 @@ export async function POST(req: NextRequest) {
           receiver_id: user_id,
           sender_id: adminId,
           task_id: taskId,
-          amount: Number(amount),
+          amount: BigInt(amount),
         },
       });
-
-      return { updatedAdmin };
     });
 
     // If the transaction is successful, return the success response
     return NextResponse.json(
       {
         message: "Funds transferred successfully.",
-        admin: result.updatedAdmin,
       },
       { status: 200 }
     );

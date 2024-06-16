@@ -9,6 +9,7 @@ import prisma from "@/lib/prisma";
 
 import { fetchShares, recoverPrivateKey } from "@/lib/shamirs-secret-sharing";
 import { TxnStatus } from "@repo/common";
+import { solToLamports } from "@/lib/utils/solana";
 
 const connection = new Connection(process.env.RPC_URL ?? "");
 const PARENT_WALLET_ADDRESS = process.env.PARENT_WALLET_ADDRESS;
@@ -92,6 +93,7 @@ export const processAdminEscrowQueue = async (job: {
   name: string;
 }) => {
   const { adminId, amount, signature } = job.data;
+  const amountInLamports = solToLamports(amount);
   console.log("\nInitializing Admin Escrow Transaction");
 
   const admin = await prisma.user.findUnique({
@@ -115,7 +117,7 @@ export const processAdminEscrowQueue = async (job: {
     const escrow = await prisma.escrow.create({
       data: {
         user_id: adminId,
-        amount: Number(amount),
+        amount: BigInt(amountInLamports),
         signature,
         status: TxnStatus.Processing,
       },
@@ -128,9 +130,9 @@ export const processAdminEscrowQueue = async (job: {
     });
 
     if (
-      (transaction?.meta?.postBalances[1] ?? 0) -
-        (transaction?.meta?.preBalances[1] ?? 0) !==
-      amount
+      BigInt((transaction?.meta?.postBalances[1] ?? 0) -
+        (transaction?.meta?.preBalances[1] ?? 0)) !==
+      amountInLamports
     ) {
       throw new Error("Transaction amount mismatch");
     }
@@ -168,7 +170,7 @@ export const processAdminEscrowQueue = async (job: {
         },
         data: {
           pending_amount: {
-            increment: Number(amount),
+            increment: BigInt(amountInLamports),
           },
         },
       }),

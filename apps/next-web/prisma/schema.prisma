@@ -14,8 +14,8 @@ model User {
   emailVerified       DateTime?
   image               String?
   role                String          @default("user")
-  pending_amount      Int             @default(0)
-  locked_amount       Int             @default(0)
+  pending_amount      BigInt             @default(0)
+  locked_amount       BigInt             @default(0)
 
   wallets             Wallet[]
   accounts            Account[]
@@ -39,7 +39,7 @@ model Account {
   providerAccountId   String
   refresh_token       String?
   access_token        String?
-  expires_at          Int?
+  expires_at          BigInt?
   token_type          String?
   scope               String?
   id_token            String?
@@ -91,7 +91,7 @@ model Task {
   title        String?      @default("Github PR")
   contact      String
   proof        String
-  amount       Int
+  amount       BigInt
   status       TaskStatus   @default(Pending)
   transfer     Transfer?
   approval     Approval?
@@ -120,7 +120,7 @@ model Transfer {
   receiver        User      @relation(name: "TransferReceiver", fields: [receiver_id], references: [id])
   task_id         String    @unique
   task            Task      @relation(fields: [task_id], references: [id])
-  amount          Int
+  amount          BigInt
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt    @default(now())
 }
@@ -129,7 +129,7 @@ model Payment {
   id            String       @id @default(uuid())
   user_id       String?
   user          User?        @relation(fields: [user_id], references: [id])
-  amount        Int
+  amount        BigInt
   signature     String       @unique
   status        TxnStatus
   createdAt     DateTime     @default(now())
@@ -140,7 +140,7 @@ model Escrow {
   id            String      @id @default(uuid())
   user_id       String
   user          User        @relation(fields: [user_id], references: [id])
-  amount        Int
+  amount        BigInt
   signature     String      @unique
   status        TxnStatus
   createdAt     DateTime    @default(now())

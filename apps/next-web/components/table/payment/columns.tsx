@@ -64,8 +64,8 @@ export const columns: ColumnDef<PaymentInput>[] = [
       <DataTableColumnHeader column={column} title="Amount" />
     ),
     cell: ({ row }) => {
-      const amount = row.getValue("amount") as string;
-      if (!amount) {
+      const amount: bigint = row.getValue("amount");
+      if (!amount && amount != BigInt(0)) {
         return null;
       }
 

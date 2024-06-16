@@ -57,9 +57,7 @@ export function DataTableRowActions<TData>({
         body: JSON.stringify({ taskId }),
       });
 
-      const data = await response.json();
-
-      if (data.admin) {
+      if (response.status === 200) {
         mutate("/api/user/task");
         mutate("/api/user/balance");
         mutate("/api/admin/transfer");

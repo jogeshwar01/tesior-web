@@ -1,9 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-
 import { Badge } from "@/components/ui/new-york/badge";
-
 import { TaskInput } from "@/lib/types";
 import { DataTableColumnHeader } from "../common/data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
@@ -39,7 +37,7 @@ export const columns: ColumnDef<TaskInput>[] = [
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">
-        {(row.getValue('id') as string).substring(0, 8)}
+        {(row.getValue("id") as string).substring(0, 8)}
       </div>
     ),
     enableSorting: false,
@@ -51,9 +49,7 @@ export const columns: ColumnDef<TaskInput>[] = [
       <DataTableColumnHeader column={column} title="Username" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">
-        {(row.original.user.name as string)}
-      </div>
+      <div className="w-[80px]">{row.original.user.name as string}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -100,8 +96,8 @@ export const columns: ColumnDef<TaskInput>[] = [
       <DataTableColumnHeader column={column} title="Amount" />
     ),
     cell: ({ row }) => {
-      const amount = row.getValue("amount") as string;
-      if (!amount) {
+      const amount: bigint = row.getValue("amount");
+      if (!amount && amount != BigInt(0)) {
         return null;
       }
 
