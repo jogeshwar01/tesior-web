@@ -1,39 +1,49 @@
-import { Queue } from "bullmq";
-import { REDIS_CONNECTION } from "./config";
-import { Worker, QueueEvents } from "bullmq";
+import {
+  Queue,
+  QueueOptions,
+  WorkerOptions,
+  Worker,
+  QueueEvents,
+} from "bullmq";
+import { Redis } from "ioredis";
+import { REDIS_CONNECTION_URL } from "./config";
 import { processUserPaymentQueue, processAdminEscrowQueue } from "./process";
 
-export const userPayoutQueue = new Queue("user-payout-queue", {
-  connection: REDIS_CONNECTION,
-  defaultJobOptions: {
-    attempts: 2,
-    backoff: {
-      type: "exponential",
-      delay: 5000,
-    },
-  },
+const REDIS_CONNECTION = new Redis(REDIS_CONNECTION_URL, {
+  maxRetriesPerRequest: null,
+  tls: {},
+  connectTimeout: 10000,
+  retryStrategy: (times) => Math.min(times * 50, 2000),
 });
 
-export const adminEscrowQueue = new Queue("admin-escrow-queue", {
+const queueOptions: QueueOptions = {
   connection: REDIS_CONNECTION,
   defaultJobOptions: {
     attempts: 2,
     backoff: {
       type: "exponential",
-      delay: 5000,
+      delay: 50000,
     },
   },
-});
+};
+
+const workerOptions: WorkerOptions = {
+  connection: REDIS_CONNECTION,
+  stalledInterval: 30000,
+};
+
+export const userPayoutQueue = new Queue("user-payout-queue", queueOptions);
+export const adminEscrowQueue = new Queue("admin-escrow-queue", queueOptions);
 
 export const userPayoutWorker = new Worker(
   "user-payout-queue",
   processUserPaymentQueue,
-  { connection: REDIS_CONNECTION }
+  workerOptions
 );
 export const adminEscrowWorker = new Worker(
   "admin-escrow-queue",
   processAdminEscrowQueue,
-  { connection: REDIS_CONNECTION }
+  workerOptions
 );
 
 // Queue event to monitor the status of the queue

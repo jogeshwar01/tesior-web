@@ -28,20 +28,40 @@ export function recoverPrivateKey(
 // Function to fetch shares from distributed servers
 export async function fetchShares(): Promise<number[][]> {
   const sharesArray: number[][] = [];
+  // currently using these directly from env variables - on devnet so no issues
+  // will ideally come from distributed servers implemented in https://github.com/jogeshwar01/tesior-pkm
+  // BUDGET ISSUE :(
+  const share1 = process.env.SHARE_1;
+  const share2 = process.env.SHARE_2;
+  const share3 = process.env.SHARE_3;
+  const share4 = process.env.SHARE_4;
+  const share5 = process.env.SHARE_5;
 
-  const fetchShare = async (endpoint: string): Promise<void> => {
-    try {
-      const response = await axios.get(`${endpoint}/share`);
-      const shareString = response.data.share as string;
-      if (shareString) {
-        const shareArray = shareString.split(",").map(Number);
-        sharesArray.push(shareArray);
-      }
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
+  if (share1 && share2 && share3 && share4 && share5) {
+    sharesArray.push(
+      share1.split(",").map(Number),
+      share2.split(",").map(Number),
+      share3.split(",").map(Number),
+      share4.split(",").map(Number),
+      share5.split(",").map(Number)
+    );
+  }
 
-  await Promise.all(DISTRIBUTED_SERVER_ENDPOINTS.map(fetchShare));
   return sharesArray;
+
+  // const fetchShare = async (endpoint: string): Promise<void> => {
+  //   try {
+  //     const response = await axios.get(`${endpoint}/share`);
+  //     const shareString = response.data.share as string;
+  //     if (shareString) {
+  //       const shareArray = shareString.split(",").map(Number);
+  //       sharesArray.push(shareArray);
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //   }
+  // };
+
+  // await Promise.all(DISTRIBUTED_SERVER_ENDPOINTS.map(fetchShare));
+  // return sharesArray;
 }
