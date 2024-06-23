@@ -16,6 +16,7 @@ import { Task, TaskStatus } from "@/lib/types";
 import { mutate } from "swr";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { APP_DOMAIN } from "@/lib/utils/constants";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -29,7 +30,7 @@ export function DataTableRowActions<TData>({
 
   const handleStatus = async (taskId: string, status: string) => {
     try {
-      const response = await fetch(`/api/admin/task/${taskId}`, {
+      const response = await fetch(`${APP_DOMAIN}/api/admin/task/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -38,7 +39,7 @@ export function DataTableRowActions<TData>({
       const data = await response.json();
 
       if (data.approval) {
-        mutate("/api/user/task");
+        mutate(`${APP_DOMAIN}/api/user/task`);
         toast.success("Task status updated successfully!");
       } else {
         toast.error("Failed to update task status");
@@ -51,16 +52,16 @@ export function DataTableRowActions<TData>({
 
   const handleTransfer = async (taskId: string) => {
     try {
-      const response = await fetch(`/api/admin/transfer`, {
+      const response = await fetch(`${APP_DOMAIN}/api/admin/transfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ taskId }),
       });
 
       if (response.status === 200) {
-        mutate("/api/user/task");
-        mutate("/api/user/balance");
-        mutate("/api/admin/transfer");
+        mutate(`${APP_DOMAIN}/api/user/task`);
+        mutate(`${APP_DOMAIN}/api/user/balance`);
+        mutate(`${APP_DOMAIN}/api/admin/transfer`);
         toast.success("Task paid successfully!");
       } else {
         toast.error("Failed to pay for task");

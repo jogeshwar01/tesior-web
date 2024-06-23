@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { APP_DOMAIN } from "../utils/constants";
 
 // To fix hydration errors - Dynamically import the WalletMultiButton for client-side rendering
 const WalletMultiButtonDynamic = dynamic(
@@ -26,13 +27,13 @@ export function usePublicKey(): UsePublicKeyHook {
     }
 
     const response = await fetch(
-      `/api/user/wallet?publicKey=${publicKey.toString()}`
+      `${APP_DOMAIN}/api/user/wallet?publicKey=${publicKey.toString()}`
     );
     if (response.status === 404) {
       const message = new TextEncoder().encode("Verify public key for tesior");
       const signature = await signMessage?.(message);
 
-      await fetch(`/api/user/wallet`, {
+      await fetch(`${APP_DOMAIN}/api/user/wallet`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -45,7 +45,6 @@ export default async function Home() {
           </a>
         </div>
       </div>
-      <div className="z-10 mt-20">Content here</div>
     </>
   );
 }
