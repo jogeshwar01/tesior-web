@@ -1,91 +1,86 @@
-# Turborepo starter
+<h3 align="center">Tesior</h3>
 
-This is an official starter Turborepo.
+<p align="center">
+    The open-source Web3 bounties platform.
+    <br />
+    <a href="https://dub.co"><strong>Learn more »</strong></a>
+    <br />
+    <br />
+    <a href="#introduction"><strong>Introduction</strong></a> ·
+    <a href="#tech-stack"><strong>Tech Stack</strong></a>
+</p>
 
-## Using this example
+<p align="center">
+  <a href="https://twitter.com/jogeshwar01">
+    <img src="https://img.shields.io/twitter/follow/jogeshwar01?style=flat&label=%40jogeshwar01&logo=twitter&color=0bf&logoColor=000" alt="Twitter" />
+  </a>
+</p>
 
-Run the following command:
+## Introduction
 
-```sh
-npx create-turbo@latest
-```
+Tesior is an open-source web3 bounty platform that streamlines financial transactions between contributors and maintainers across various projects. Whether for software, content, or any collaborative effort, Tesior ensures efficient and transparent fund management, enhancing the workflow for all participants.
 
-## What's inside?
+## Tech Stack
 
-This Turborepo includes the following packages/apps:
+- [Next.js](https://nextjs.org/) – framework
+- [TypeScript](https://www.typescriptlang.org/) – language
+- [Tailwind](https://tailwindcss.com/) – CSS
+- [Upstash](https://upstash.com/) – redis
+- [Neon](https://neon.tech/) - database
+- [Prisma](https://www.prisma.io/) - ORM
+- [NextAuth.js](https://next-auth.js.org/) – auth
+- [Solana Web3.js](https://github.com/solana-labs/solana-web3.js) - payments
+- [Turborepo](https://turbo.build/repo) – monorepo
+- [Vercel](https://vercel.com/) – deployments
 
-### Apps and Packages
+#### Others
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- [Shadcn/ui](https://ui.shadcn.com/)
+- [Precedent](https://github.com/steven-tey/precedent)
+- [Radix UI](https://www.radix-ui.com/)
+- [Tanstack](https://tanstack.com/)
+- [Bullmq](https://docs.bullmq.io/)
+- [Zod](https://zod.dev/)
+- [SWR](https://swr.vercel.app/)
+- [Sonner](https://sonner.emilkowal.ski/)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Development
 
-### Utilities
+### Setup
 
-This Turborepo has some additional tools already setup for you:
+1. Clone the repo into a public GitHub repository (or fork https://github.com/jogeshwar01/tesior-web/fork).
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+   ```sh
+   git clone https://github.com/jogeshwar01/tesior-web.git
+   ```
 
-### Build
+2. Go to the project folder
 
-To build all apps and packages, run the following command:
+   ```sh
+   cd tesior-web
+   ```
 
-```
-cd my-turborepo
-pnpm build
-```
+3. Install packages with yarn
 
-### Develop
+   ```sh
+   yarn install
+   ```
 
-To develop all apps and packages, run the following command:
+4. Set up your `.env` file
 
-```
-cd my-turborepo
-pnpm dev
-```
+   - Duplicate `.env.example` to `.env`
+   - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the `.env` file.
+   - Setup Github app to configure NextAuth. Add the respective `GITHUB_CLIENT_ID` AND `GITHUB_CLIENT_SECRET`
+   - For developing locally, start postgres and redis locally
 
-### Remote Caching
+   ```sh
+   cd docker
+   docker compose up
+   ```
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+5. Build and Start the Nextjs app
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
-
-## Setting up common -
-
-- add `tsconfig.json`
-- add `typescript` as dependency in common
-- add `exports` in package.json
-
-To use - 
-- add `"@repo/common": "*"` in package.json
-- import { add } from "@repo/common/config";
+   ```sh
+   yarn build
+   yarn dev
+   ```
