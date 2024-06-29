@@ -25,7 +25,6 @@ import {
   useState,
 } from "react";
 import { Modal } from "@/components/shared";
-import { APP_DOMAIN } from "@/lib/utils/constants";
 
 const taskFormSchema = z.object({
   title: z
@@ -73,7 +72,7 @@ export function AddEditTaskModal({
   const saveTask = async (data: any) => {
     setSaving(true);
     try {
-      const response = await fetch(`${APP_DOMAIN}/api/user/task`, {
+      const response = await fetch(`/api/user/task`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -82,7 +81,7 @@ export function AddEditTaskModal({
       setShowModal(false);
       toast.success("Task successfully created!");
 
-      mutate(`${APP_DOMAIN}/api/user/task`);
+      mutate(`/api/user/task`);
     } catch (error) {
       console.error("Failed to create task", error);
       toast.error("Failed to create task!");

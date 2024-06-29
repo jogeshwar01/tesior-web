@@ -2,8 +2,7 @@
   "name": "tesior",
   "private": true,
   "scripts": {
-    "build": "npx prisma generate && turbo build",
-    "postinstall": "npx prisma generate",
+    "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

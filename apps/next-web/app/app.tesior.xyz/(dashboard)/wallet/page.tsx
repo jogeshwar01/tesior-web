@@ -8,7 +8,7 @@ import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { TOTAL_DECIMALS, APP_DOMAIN } from "@/lib/utils/constants";
+import { TOTAL_DECIMALS } from "@/lib/utils/constants";
 
 const PARENT_WALLET_ADDRESS =
   process.env.PARENT_WALLET_ADDRESS ??
@@ -49,14 +49,14 @@ export default function Wallet() {
         signature,
       });
 
-      const response = await fetch(`${APP_DOMAIN}/api/admin/escrow`, {
+      const response = await fetch(`/api/admin/escrow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: amount, signature }),
       });
 
       if (response.status === 200) {
-        // mutate(`${APP_DOMAIN}/api/user/balance`);  // no need to do this as useBalance SWR refreshes every 30 seconds
+        // mutate(`/api/user/balance`);  // no need to do this as useBalance SWR refreshes every 30 seconds
         toast.success("Escrow creation initiated!");
       } else {
         toast.error("Failed to send escrow");
@@ -69,7 +69,7 @@ export default function Wallet() {
 
   async function withdraw() {
     try {
-      const response = await fetch(`${APP_DOMAIN}/api/user/payment`, {
+      const response = await fetch(`/api/user/payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
