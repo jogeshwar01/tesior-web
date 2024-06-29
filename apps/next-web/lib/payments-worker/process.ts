@@ -16,7 +16,6 @@ const PARENT_WALLET_ADDRESS = process.env.PARENT_WALLET_ADDRESS;
 
 export const processUserPaymentQueue = async (job: {
   data: { userId: string };
-  name: string;
 }) => {
   const { userId } = job.data as {
     userId: string;
@@ -90,7 +89,6 @@ export const processUserPaymentQueue = async (job: {
 
 export const processAdminEscrowQueue = async (job: {
   data: { adminId: string; amount: number; signature: string };
-  name: string;
 }) => {
   const { adminId, amount, signature } = job.data;
   const amountInLamports = solToLamports(amount);

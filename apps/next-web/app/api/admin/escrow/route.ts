@@ -1,8 +1,8 @@
 import { getSession } from "@/lib/auth/session";
-import { adminEscrowQueue } from "@/lib/redis/queues";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { lamportsToSol, solToLamports } from "@/lib/utils/solana";
+import { Redis } from "@/lib/payments-worker/redis";
 
 // Get all user escrows
 export async function GET() {
@@ -50,10 +50,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await adminEscrowQueue.add("process-queue", {
-      adminId,
-      amount,
-      signature,
+    await Redis.getInstance().send("admin_escrow", {
+      data: {
+        adminId,
+        amount,
+        signature,
+      },
     });
 
     return NextResponse.json(

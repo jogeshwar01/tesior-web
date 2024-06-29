@@ -1,20 +1,22 @@
 export const register = async () => {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     // we do get a warning - Import trace for requested module:
-    const { userPayoutWorker, adminEscrowWorker } = await import(
-      "@/lib/redis/queues"
-    );
+    const { processQueue } = await import("@/lib/payments-worker/queues");
 
     try {
-      await userPayoutWorker.waitUntilReady();
-      await adminEscrowWorker.waitUntilReady();
+      (async () => {
+        const x = 0;
+        while (x < 1) {
+          // Run always
+          await processQueue("user_payment");
+          await processQueue("admin_escrow");
+        }
+      })();
 
-      console.log("Admin Worker Running - ", adminEscrowWorker.isRunning());
-      console.log("User Worker Running - ", userPayoutWorker.isRunning());
-
-      console.log("Workers ready!");
+      console.log("User Queue Running!");
+      console.log("Admin Queue Running!");
     } catch (error) {
-      console.error("Failed to initialize admin workers:", error);
+      console.error("Failed to start queue processing:", error);
     }
   }
 };
