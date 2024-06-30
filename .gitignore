@@ -8,8 +8,11 @@ node_modules
 # Local env files
 .env
 .env.local
+.env.admin
+.env.admin.local
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
 
 # Testing

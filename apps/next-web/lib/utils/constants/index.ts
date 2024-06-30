@@ -1,7 +1,7 @@
 export const DEPLOY_URL = ``;
 export const TOTAL_DECIMALS = parseInt(process.env.TOTAL_DECIMALS ?? "1000000000");
 
-export const SHORT_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "tesior.xyz";
+export const SHORT_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || process.env.NEXT_ADMIN_APP_DOMAIN || "tesior.xyz";
 
 export const HOME_DOMAIN = `https://${process.env.NEXT_PUBLIC_APP_DOMAIN}`;
 
