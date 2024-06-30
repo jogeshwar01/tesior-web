@@ -12,7 +12,7 @@ import { TxnStatus } from "@repo/common";
 import { solToLamports } from "@/lib/utils/solana";
 
 const connection = new Connection(process.env.RPC_URL ?? "");
-const PARENT_WALLET_ADDRESS = process.env.PARENT_WALLET_ADDRESS;
+const APP_WALLET_ADDRESS = process.env.APP_WALLET_ADDRESS;
 
 export const processUserPaymentQueue = async (job: {
   data: { userId: string };
@@ -36,12 +36,12 @@ export const processUserPaymentQueue = async (job: {
     if (!user || !wallet) {
       throw new Error("User or Public Key Not Found");
     }
-    if (!PARENT_WALLET_ADDRESS) {
+    if (!APP_WALLET_ADDRESS) {
       throw new Error("Set parent public key");
     }
     const transaction = new Transaction().add(
       SystemProgram.transfer({
-        fromPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
+        fromPubkey: new PublicKey(APP_WALLET_ADDRESS),
         toPubkey: new PublicKey(wallet.publicKey),
         lamports: user.locked_amount,
       })
@@ -128,16 +128,17 @@ export const processAdminEscrowQueue = async (job: {
     });
 
     if (
-      BigInt((transaction?.meta?.postBalances[1] ?? 0) -
-        (transaction?.meta?.preBalances[1] ?? 0)) !==
-      amountInLamports
+      BigInt(
+        (transaction?.meta?.postBalances[1] ?? 0) -
+          (transaction?.meta?.preBalances[1] ?? 0)
+      ) !== amountInLamports
     ) {
       throw new Error("Transaction amount mismatch");
     }
 
     if (
       transaction?.transaction.message.getAccountKeys().get(1)?.toString() !==
-      PARENT_WALLET_ADDRESS
+      APP_WALLET_ADDRESS
     ) {
       throw new Error("Transaction sent to wrong address");
     }

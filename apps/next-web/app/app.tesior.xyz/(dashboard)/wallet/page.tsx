@@ -10,8 +10,8 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { TOTAL_DECIMALS } from "@/lib/utils/constants";
 
-const PARENT_WALLET_ADDRESS =
-  process.env.PARENT_WALLET_ADDRESS ??
+const APP_WALLET_ADDRESS =
+  process.env.APP_WALLET_ADDRESS ??
   "GaCqPZyUbEWHvUHq821qqDxG2YofznCrA5B6sW7MfZRs";
 
 export default function Wallet() {
@@ -29,7 +29,7 @@ export default function Wallet() {
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey!,
-          toPubkey: new PublicKey(PARENT_WALLET_ADDRESS),
+          toPubkey: new PublicKey(APP_WALLET_ADDRESS),
           lamports: amount * TOTAL_DECIMALS,
         })
       );

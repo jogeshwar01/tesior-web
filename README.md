@@ -1,9 +1,7 @@
-<h3 align="center">Tesior</h3>
+<h1 align="center">Tesior</h1>
 
 <p align="center">
     The open-source Web3 bounties platform.
-    <br />
-    <a href="https://dub.co"><strong>Learn more »</strong></a>
     <br />
     <br />
     <a href="#introduction"><strong>Introduction</strong></a> ·
@@ -39,7 +37,6 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 - [Precedent](https://github.com/steven-tey/precedent)
 - [Radix UI](https://www.radix-ui.com/)
 - [Tanstack](https://tanstack.com/)
-- [Bullmq](https://docs.bullmq.io/)
 - [Zod](https://zod.dev/)
 - [SWR](https://swr.vercel.app/)
 - [Sonner](https://sonner.emilkowal.ski/)
@@ -48,19 +45,19 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 
 ### Setup
 
-1. Clone the repo into a public GitHub repository (or fork https://github.com/jogeshwar01/tesior-web/fork).
+1. Clone the repo into a public GitHub repository (or fork https://github.com/jogeshwar01/tesior-web).
 
    ```sh
    git clone https://github.com/jogeshwar01/tesior-web.git
    ```
 
-2. Go to the project folder
+2. Go to the project folder.
 
    ```sh
    cd tesior-web
    ```
 
-3. Install packages with yarn
+3. Install packages with yarn.
 
    ```sh
    yarn install
@@ -68,19 +65,33 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 
 4. Set up your `.env` file
 
-   - Duplicate `.env.example` to `.env`
+   - Duplicate `.env.example` to `.env`.
    - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the `.env` file.
-   - Setup Github app to configure NextAuth. Add the respective `GITHUB_CLIENT_ID` AND `GITHUB_CLIENT_SECRET`
-   - For developing locally, start postgres and redis locally
+   - Add the `APP_WALLET_ADDRESS` - public key to receive payments.
+   - Setup Github app to configure NextAuth. Add the respective `GITHUB_CLIENT_ID` AND `GITHUB_CLIENT_SECRET`.
 
-   ```sh
-   cd docker
-   docker compose up
-   ```
+   - For developing locally, start postgres and redis locally.
 
-5. Build and Start the Nextjs app
+     ```sh
+     cd docker
+     docker compose up
+     ```
+
+   - For cloud deployments, setup database on Neon and redis on Upstash.
+
+5. Private key management -
+
+   - To send payments, you would need the private key of your wallet. This can be secured using multi-cloud kubernetes clusters and shamir secret sharing. This has been implemented here - [Tesior-pkm](https://github.com/jogeshwar01/tesior-pkm).
+
+   - To test locally, go through the `shamir-secret-sharing` module [here](https://github.com/jogeshwar01/tesior-web/tree/main/apps/next-web/lib/shamirs-secret-sharing). Create 5 shares using the [createShares](https://github.com/jogeshwar01/tesior-web/blob/main/apps/next-web/lib/shamirs-secret-sharing/createShares.ts) function. Update [fetchShares](https://github.com/jogeshwar01/tesior-web/blob/main/apps/next-web/lib/shamirs-secret-sharing/recoverPrivateKey.ts) to get shares from `.env` instead of api calls to multi-cloud servers.
+
+5. Build and Start the Nextjs app.
 
    ```sh
    yarn build
    yarn dev
    ```
+
+## License
+
+Tesior is open-source under the MIT License. You can [find it here](https://github.com/jogeshwar01/tesior-web/blob/main/LICENSE.md).
