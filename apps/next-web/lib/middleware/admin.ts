@@ -1,7 +1,6 @@
 import { parse } from "@/lib/middleware/utils";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import { APP_DOMAIN } from "@/lib/utils/constants";
 
 export default async function AdminMiddleware(req: NextRequest) {
   const { path } = parse(req);
@@ -21,7 +20,7 @@ export default async function AdminMiddleware(req: NextRequest) {
   // as middleware only supports edge runtime and not node runtime
   if (sessionUser?.id) {
     const response = await fetch(
-      APP_DOMAIN + `/api/database/admin?userId=${sessionUser.id}`
+      process.env.NEXT_ADMIN_APP_DOMAIN + `/api/database/admin?userId=${sessionUser.id}`
     );
 
     const data = await response.json();

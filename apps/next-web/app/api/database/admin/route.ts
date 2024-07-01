@@ -17,6 +17,8 @@ export async function GET(req: NextRequest) {
       isAdmin = user.role === "admin";
     }
 
-    return NextResponse.json({ isAdmin }, { status: 401 });
+    return NextResponse.json({ isAdmin }, { status: 200 });
   }
+
+  return NextResponse.json({ error: "User id not provided" }, { status: 400 });
 }

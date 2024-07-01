@@ -1,3 +1,6 @@
+<a href="https://tesior-web.vercel.app">
+  <img alt="The open-source Web3 bounties platform." src="https://github.com/jogeshwar01/tesior-web/assets/85165953/c04320c6-b2ae-4a66-a576-69af897d6327" style="width: 100%;">
+</a>
 <h1 align="center">Tesior</h1>
 
 <p align="center">
@@ -5,7 +8,8 @@
     <br />
     <br />
     <a href="#introduction"><strong>Introduction</strong></a> ·
-    <a href="#tech-stack"><strong>Tech Stack</strong></a>
+    <a href="#tech-stack"><strong>Tech Stack</strong></a> .
+    <a href="#contributing"><strong>Contributing</strong></a>
 </p>
 
 <p align="center">
@@ -41,9 +45,16 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 - [SWR](https://swr.vercel.app/)
 - [Sonner](https://sonner.emilkowal.ski/)
 
-## Development
+## Contributing
 
-### Setup
+We love our contributors! Here's how you can contribute:
+
+- [Open an issue](https://github.com/jogeshwar01/tesior-web/issues) if you believe you've encountered a bug.
+- Follow the [local development setup guide](#local-development-setup) below to get your local dev environment set up.
+- Make a [pull request](https://github.com/jogeshwar01/tesior-web/pull) to add new features/make quality-of-life improvements/fix bugs.
+
+## Local Development
+A guide on how to run Tesior's codebase locally
 
 1. Clone the repo into a public GitHub repository (or fork https://github.com/jogeshwar01/tesior-web).
 
@@ -85,7 +96,7 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 
    - To test locally, go through the `shamir-secret-sharing` module [here](https://github.com/jogeshwar01/tesior-web/tree/main/apps/next-web/lib/shamirs-secret-sharing). Create 5 shares using the [createShares](https://github.com/jogeshwar01/tesior-web/blob/main/apps/next-web/lib/shamirs-secret-sharing/createShares.ts) function. Update [fetchShares](https://github.com/jogeshwar01/tesior-web/blob/main/apps/next-web/lib/shamirs-secret-sharing/recoverPrivateKey.ts) to get shares from `.env` instead of api calls to multi-cloud servers.
 
-5. Build and Start the Nextjs app.
+6. Build and Start the Nextjs app.
 
    ```sh
    yarn build
