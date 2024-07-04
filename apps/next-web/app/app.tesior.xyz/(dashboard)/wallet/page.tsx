@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { TOTAL_DECIMALS } from "@/lib/utils/constants";
+import { usePublicKey } from "@/lib/hooks/use-public-key";
 
 const APP_WALLET_ADDRESS =
   process.env.APP_WALLET_ADDRESS ??
@@ -20,6 +21,7 @@ export default function Wallet() {
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
   const [amount, setAmount] = useState<number>(0.1);
+  const { WalletMultiButtonDynamic } = usePublicKey();
 
   if (error) return <div>Failed to load wallet</div>;
   if (loading) return <div>Loading...</div>;
@@ -111,7 +113,13 @@ export default function Wallet() {
   ];
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex my-16 justify-center h-screen">
+      {session && (
+        <div className="absolute top-20 lg:block lg:right-40 sm:top-32 lg:top-44">
+          <WalletMultiButtonDynamic />
+        </div>
+      )}
+
       <div className="animate-fade-up">
         {features.map(({ title, description, demo, large }) => (
           <Card
