@@ -53,13 +53,13 @@ const defaultValues: Partial<ProfileFormValues> = {
 };
 
 interface AddEditTaskModalProps {
-  showModal: boolean;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
+  showAddEditTaskModal: boolean;
+  setShowAddEditTaskModal: Dispatch<SetStateAction<boolean>>;
 }
 
 export function AddEditTaskModal({
-  showModal,
-  setShowModal,
+  showAddEditTaskModal,
+  setShowAddEditTaskModal,
 }: AddEditTaskModalProps) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -78,7 +78,7 @@ export function AddEditTaskModal({
         body: JSON.stringify(data),
       });
       await response.json();
-      setShowModal(false);
+      setShowAddEditTaskModal(false);
       toast.success("Task successfully created!");
 
       mutate(`/api/user/task`);
@@ -106,8 +106,8 @@ export function AddEditTaskModal({
   return (
     <Modal
       className="p-8 max-h-[90vh] overflow-y-auto"
-      showModal={showModal}
-      setShowModal={setShowModal}
+      showModal={showAddEditTaskModal}
+      setShowModal={setShowAddEditTaskModal}
     >
       <h3 className="text-lg font-medium">Add Task</h3>
       <p className="text-sm text-muted-foreground pb-4">
@@ -205,20 +205,20 @@ export function AddEditTaskModal({
 }
 
 export function useAddEditTaskModal() {
-  const [showModal, setShowModal] = useState(false);
+  const [showAddEditTaskModal, setShowAddEditTaskModal] = useState(false);
 
   const AddEditTaskModalCallback = useCallback(
     () => (
-      <AddEditTaskModal showModal={showModal} setShowModal={setShowModal} />
+      <AddEditTaskModal showAddEditTaskModal={showAddEditTaskModal} setShowAddEditTaskModal={setShowAddEditTaskModal} />
     ),
-    [showModal, setShowModal]
+    [showAddEditTaskModal, setShowAddEditTaskModal]
   );
 
   return useMemo(
     () => ({
-      setShowModal,
+      setShowAddEditTaskModal,
       AddEditTaskModal: AddEditTaskModalCallback,
     }),
-    [setShowModal, AddEditTaskModalCallback]
+    [setShowAddEditTaskModal, AddEditTaskModalCallback]
   );
 }

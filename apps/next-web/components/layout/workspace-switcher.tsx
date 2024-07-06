@@ -2,7 +2,6 @@
 
 import useWorkspaces from "@/lib/swr/useWorkspaces";
 import { WorkspaceProps } from "@/lib/types";
-import { useAddWorkspaceModal } from "@/components/modals";
 import { BlurImage, Popover } from "@/components/ui";
 import { Tick } from "@/components/shared/icons";
 import { DICEBEAR_AVATAR_URL } from "@/lib/utils/constants";
@@ -10,7 +9,8 @@ import { ChevronsUpDown, PlusCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
+import { ModalContext } from "@/components/modals/provider";
 
 export default function WorkspaceSwitcher() {
   const { workspaces } = useWorkspaces();
@@ -22,7 +22,7 @@ export default function WorkspaceSwitcher() {
 
   const selected = useMemo(() => {
     const selectedWorkspace = workspaces?.find(
-      (workspace: any) => workspace.slug === slug,
+      (workspace: any) => workspace.slug === slug
     );
 
     if (slug && workspaces && selectedWorkspace) {
@@ -115,7 +115,8 @@ function WorkspaceList({
   workspaces: WorkspaceProps[];
   setOpenPopover: (open: boolean) => void;
 }) {
-  const { setShowAddWorkspaceModal } = useAddWorkspaceModal();
+  const { setShowAddWorkspaceModal } = useContext(ModalContext);
+  
   const { domain, key } = useParams() as { domain?: string; key?: string };
   const pathname = usePathname();
 
@@ -129,7 +130,7 @@ function WorkspaceList({
         return pathname?.replace(selected.slug, slug).split("?")[0] || "/";
       }
     },
-    [domain, key, pathname, selected.slug],
+    [domain, key, pathname, selected.slug]
   );
 
   return (

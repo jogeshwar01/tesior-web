@@ -5,12 +5,13 @@ import { DataTable } from "@/components/table/task/data-table";
 import useTasks from "@/lib/swr/useTasks";
 import z from "zod";
 import { Task } from "@/lib/types";
-import { useAddEditTaskModal } from "@/components/modals";
 import { Button } from "@/components/ui/new-york/button";
+import { useContext } from "react";
+import { ModalContext } from "@/components/modals/provider";
 
 export default function TaskPage() {
   const { tasks: data, error, loading } = useTasks();
-  const { setShowModal, AddEditTaskModal } = useAddEditTaskModal();
+  const { setShowAddEditTaskModal } = useContext(ModalContext);
 
   if (error) return <div>Failed to load tasks</div>;
   if (loading) return <div>Loading...</div>;
@@ -30,11 +31,10 @@ export default function TaskPage() {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowAddEditTaskModal(true)}
           >
             Add Task
           </Button>
-          <AddEditTaskModal />
         </div>
       </div>
       <DataTable data={tasks} columns={columns} />

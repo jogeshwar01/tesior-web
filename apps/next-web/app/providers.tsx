@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import ModalProvider from "@/components/modals/provider";
 import { ReactNode, useMemo } from "react";
 import {
   ConnectionProvider,
@@ -19,7 +20,9 @@ export default function Providers({ children }: { children: ReactNode }) {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={[]} autoConnect>
         <WalletModalProvider>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            <ModalProvider>{children}</ModalProvider>
+          </SessionProvider>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
