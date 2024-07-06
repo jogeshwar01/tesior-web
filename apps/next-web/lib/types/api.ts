@@ -66,3 +66,17 @@ export type BalanceInput = {
 export type PaymentInput = z.infer<typeof Payment>;
 
 export type TransferInput = z.infer<typeof Transfer>;
+
+export const roles = ["owner", "member"] as const;
+export type RoleProps = (typeof roles)[number];
+
+export interface WorkspaceProps {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string | null;
+  createdAt: Date;
+  users: {
+    role: RoleProps;
+  }[];
+}

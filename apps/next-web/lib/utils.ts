@@ -6,11 +6,32 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const timeAgo = (timestamp: Date, timeOnly?: boolean): string => {
-  if (!timestamp) return "never";
-  return `${ms(Date.now() - new Date(timestamp).getTime())}${
-    timeOnly ? "" : " ago"
-  }`;
+
+export const timeAgo = (
+  timestamp: Date | null,
+  {
+    withAgo,
+  }: {
+    withAgo?: boolean;
+  } = {},
+): string => {
+  if (!timestamp) return "Never";
+  const diff = Date.now() - new Date(timestamp).getTime();
+  if (diff < 1000) {
+    // less than 1 second
+    return "Just now";
+  } else if (diff > 82800000) {
+    // more than 23 hours – similar to how Twitter displays timestamps
+    return new Date(timestamp).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year:
+        new Date(timestamp).getFullYear() !== new Date().getFullYear()
+          ? "numeric"
+          : undefined,
+    });
+  }
+  return `${ms(diff)}${withAgo ? " ago" : ""}`;
 };
 
 export async function fetcher<JSON = any>(
@@ -35,8 +56,16 @@ export async function fetcher<JSON = any>(
   return res.json();
 }
 
-export function nFormatter(num: number, digits?: number) {
+export function nFormatter(
+  num?: number,
+  opts: { digits?: number; full?: boolean } = {
+    digits: 1,
+  },
+) {
   if (!num) return "0";
+  if (opts.full) {
+    return Intl.NumberFormat("en-US").format(num);
+  }
   const lookup = [
     { value: 1, symbol: "" },
     { value: 1e3, symbol: "K" },
@@ -54,7 +83,7 @@ export function nFormatter(num: number, digits?: number) {
       return num >= item.value;
     });
   return item
-    ? (num / item.value).toFixed(digits || 1).replace(rx, "$1") + item.symbol
+    ? (num / item.value).toFixed(opts.digits).replace(rx, "$1") + item.symbol
     : "0";
 }
 
