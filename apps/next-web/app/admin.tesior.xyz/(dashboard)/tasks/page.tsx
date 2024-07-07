@@ -1,1 +1,1 @@
-export { default } from "../../../app.tesior.xyz/(dashboard)/tasks/page";
+export { default } from "../../../app.tesior.xyz/(dashboard)/[slug]/tasks/page";

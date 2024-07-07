@@ -6,14 +6,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
 export const timeAgo = (
   timestamp: Date | null,
   {
     withAgo,
   }: {
     withAgo?: boolean;
-  } = {},
+  } = {}
 ): string => {
   if (!timestamp) return "Never";
   const diff = Date.now() - new Date(timestamp).getTime();
@@ -34,23 +33,21 @@ export const timeAgo = (
   return `${ms(diff)}${withAgo ? " ago" : ""}`;
 };
 
+interface SWRError extends Error {
+  status: number;
+}
+
 export async function fetcher<JSON = any>(
   input: RequestInfo,
-  init?: RequestInit,
+  init?: RequestInit
 ): Promise<JSON> {
   const res = await fetch(input, init);
 
   if (!res.ok) {
-    const json = await res.json();
-    if (json.error) {
-      const error = new Error(json.error) as Error & {
-        status: number;
-      };
-      error.status = res.status;
-      throw error;
-    } else {
-      throw new Error("An unexpected error occurred");
-    }
+    const error = await res.text();
+    const err = new Error(error) as SWRError;
+    err.status = res.status;
+    throw err;
   }
 
   return res.json();
@@ -60,7 +57,7 @@ export function nFormatter(
   num?: number,
   opts: { digits?: number; full?: boolean } = {
     digits: 1,
-  },
+  }
 ) {
   if (!num) return "0";
   if (opts.full) {

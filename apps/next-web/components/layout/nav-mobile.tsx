@@ -4,32 +4,14 @@ import { cn } from "@/lib/utils";
 import { APP_DOMAIN } from "@/lib/utils/constants";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { useSelectedLayoutSegment } from "next/navigation";
+import useWorkspace from "@/lib/swr/useWorkspace";
 
 type NavTheme = "light" | "dark";
-
-const navItems = [
-  {
-    name: "Tasks",
-    slug: "tasks",
-  },
-  {
-    name: "Payments",
-    slug: "payments",
-  },
-  {
-    name: "Transfers",
-    slug: "transfers",
-  },
-  {
-    name: "Wallet",
-    slug: "wallet",
-  },
-];
 
 export function NavMobile({
   theme = "light",
@@ -38,12 +20,31 @@ export function NavMobile({
   theme?: NavTheme;
   session: Session | null;
 }) {
-  const { domain = APP_DOMAIN } = useParams() as { domain: string };
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
 
-  const createHref = (href: string) =>
-    domain === APP_DOMAIN ? href : `${APP_DOMAIN}${href}`;
+  const { error } = useWorkspace();
+  const pathname = usePathname();
+  const { slug } = useParams() as { slug?: string };
+
+  let navItems = [
+    { name: "Tasks", href: `/${slug}/tasks` },
+    { name: "Payments", href: `/${slug}/payments` },
+    { name: "Transfers", href: `/${slug}/transfers` },
+    { name: "Wallet", href: "/wallet" },
+  ];
+
+  if (error || pathname === "/wallet" || pathname === "/") {
+    // don't show tabs on home/wallet/error page
+    navItems = [
+      {
+        name: "Wallet",
+        href: "/wallet",
+      },
+    ];
+  }
+
+  const createHref = (href: string) => `${APP_DOMAIN}${href}`;
 
   // prevent body scroll when modal is open
   useEffect(() => {
@@ -76,16 +77,15 @@ export function NavMobile({
         )}
       >
         <ul className="grid divide-y divide-gray-200 dark:divide-black/[0.15]">
-          {navItems.map(({ name, slug }) => (
-            <li key={slug} className="py-3 text-gray-500">
+          {navItems.map(({ name, href }) => (
+            <li key={href} className="py-3 text-gray-500">
               <Link
-                href={createHref(`/${slug}`)}
+                href={createHref(`/${href}`)}
                 onClick={() => setOpen(false)}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors ease-out hover:text-black dark:text-black/50 dark:hover:text-black",
                   {
-                    "text-black dark:text-black":
-                      selectedLayout === slug,
+                    "text-black dark:text-black": selectedLayout === href,
                   }
                 )}
               >

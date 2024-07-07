@@ -1,18 +1,23 @@
 "use client";
 
+import useWorkspace from "@/lib/swr/useWorkspace";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 export default function NavTabs() {
   const pathname = usePathname();
+  const { error } = useWorkspace();
+  const { slug } = useParams() as { slug?: string };
 
   const tabs = [
-    { name: "Tasks", href: `/tasks` },
-    { name: "Payments", href: `/payments` },
-    { name: "Transfers", href: `/transfers` },
-    { name: "Wallet", href: `/wallet` },
+    { name: "Tasks", href: `/${slug}/tasks` },
+    { name: "Payments", href: `/${slug}/payments` },
+    { name: "Transfers", href: `/${slug}/transfers` },
   ];
+
+  // don't show tabs on home/wallet/error page
+  if (error || pathname === "/wallet" || pathname === "/") return null;
 
   return (
     <div className="hidden sm:flex scrollbar-hide mb-[-3px] h-12 items-center justify-start space-x-2 overflow-x-auto">

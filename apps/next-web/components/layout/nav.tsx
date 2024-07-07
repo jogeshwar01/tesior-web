@@ -25,6 +25,12 @@ export function Nav({ session }: { session: Session | null }) {
               <WorkspaceSwitcher />
             </div>
             <div className="flex items-center space-x-6">
+              <Link
+                href="/wallet"
+                className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
+              >
+                Wallet
+              </Link>
               <div className="hidden sm:block">
                 <div>
                   {session ? (
@@ -42,7 +48,7 @@ export function Nav({ session }: { session: Session | null }) {
             </div>
           </div>
           <Suspense fallback={<div className="h-12 w-full" />}>
-            <NavTabs/>
+            <NavTabs />
             <NavMobile session={session} />
           </Suspense>
         </MaxWidthWrapper>
