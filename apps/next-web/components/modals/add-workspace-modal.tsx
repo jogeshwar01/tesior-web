@@ -17,6 +17,8 @@ import {
 import { toast } from "sonner";
 import { mutate } from "swr";
 import { useDebounce } from "use-debounce";
+import { AlertCircleFill } from "@/components/shared/icons";
+import { Input } from "@/components/ui/new-york/input";
 
 function AddWorkspaceModalHelper({
   showAddWorkspaceModal,
@@ -67,15 +69,8 @@ function AddWorkspaceModalHelper({
       setShowModal={setShowAddWorkspaceModal}
     >
       <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 px-4 py-4 pt-8 sm:px-16">
-        <Logo />
+        <h2 className="text-2xl font-bold">Tesior</h2>
         <h3 className="text-lg font-medium">Create a new workspace</h3>
-        <a
-          href="https://dub.co/help/article/what-is-a-workspace"
-          target="_blank"
-          className="-translate-y-2 text-center text-xs text-gray-500 underline underline-offset-4 hover:text-gray-800"
-        >
-          What is a workspace?
-        </a>
       </div>
 
       <form
@@ -122,14 +117,14 @@ function AddWorkspaceModalHelper({
             />
           </label>
           <div className="mt-2 flex rounded-md shadow-sm">
-            <input
+            <Input
               name="name"
               id="name"
               type="text"
               required
               autoFocus={!isMobile}
               autoComplete="off"
-              className="block w-full rounded-md border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
+              className="block p-3 w-full rounded-md border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
               placeholder="Acme, Inc."
               value={name}
               onChange={(e) => {
@@ -138,6 +133,57 @@ function AddWorkspaceModalHelper({
               aria-invalid="true"
             />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="slug" className="flex items-center space-x-2">
+            <p className="block text-sm font-medium text-gray-700">
+              Workspace Slug
+            </p>
+            <InfoTooltip
+              content={`This is your workspace's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
+            />
+          </label>
+          <div className="relative mt-2 flex rounded-md shadow-sm">
+            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-5 text-gray-500 sm:text-sm">
+              tesior
+            </span> 
+            <Input
+              name="slug"
+              id="slug"
+              type="text"
+              required
+              autoComplete="off"
+              pattern="[a-zA-Z0-9\-]+"
+              className={`${
+                slugError
+                  ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
+                  : "border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
+              } block w-full rounded-r-md focus:outline-none sm:text-sm rounded-l-none`}
+              placeholder="acme"
+              value={slug}
+              minLength={3}
+              maxLength={48}
+              onChange={(e) => {
+                setSlugError(null);
+                setData({ ...data, slug: e.target.value });
+              }}
+              aria-invalid="true"
+            />
+            {slugError && (
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <AlertCircleFill
+                  className="h-5 w-5 text-red-500"
+                  aria-hidden="true"
+                />
+              </div>
+            )}
+          </div>
+          {slugError && (
+            <p className="mt-2 text-sm text-red-600" id="slug-error">
+              {slugError}
+            </p>
+          )}
         </div>
 
         <Button type="submit" disabled={saving || (slugError ? true : false)}>

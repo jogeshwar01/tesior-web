@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
 
-// Get all user workspaces
+// GET /api/workspaces - get all projects for the current user
 export async function GET() {
   try {
     const session = await getSession();
@@ -28,6 +28,42 @@ export async function GET() {
     });
 
     return NextResponse.json(projects, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(error.message, { status: 500 });
+  }
+}
+
+// POST /api/workspaces - create a new project for the current user
+export async function POST(req: NextRequest) {
+  const session = await getSession();
+  const userId = session.user.id;
+
+  if (!userId) {
+    return new Response("User is required", { status: 400 });
+  }
+
+  const body = await req.json();
+  const { name, slug } = body;
+
+  if (!name || !slug || !userId) {
+    return new Response("Invalid payload", { status: 411 });
+  }
+
+  try {
+    const project = await prisma.project.create({
+      data: {
+        name,
+        slug,
+        users: {
+          create: {
+            user_id: userId,
+            role: "owner",
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(project, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(error.message, { status: 500 });
   }

@@ -38,6 +38,7 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 #### Others
 
 - [Shadcn/ui](https://ui.shadcn.com/)
+- [Dub.co](https://github.com/dubinc/dub)
 - [Precedent](https://github.com/steven-tey/precedent)
 - [Radix UI](https://www.radix-ui.com/)
 - [Tanstack](https://tanstack.com/)
