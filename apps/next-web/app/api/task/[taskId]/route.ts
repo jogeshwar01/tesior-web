@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { TaskStatus } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
+import { getSearchParams } from "@/lib/utils/functions";
 
 // Update task status and record approval/rejection
 export async function PUT(
@@ -11,13 +12,35 @@ export async function PUT(
   const taskId = params.taskId;
   const session = await getSession();
 
-  if (!taskId) {
+  const searchParams = getSearchParams(req.url);
+  const workspaceId: string | undefined = searchParams.workspaceId || undefined;
+
+  if (!taskId || !workspaceId) {
     return NextResponse.json(
       {
-        error: "Task ID is required.",
+        error: "Task and Workspace ID is required.",
       },
       {
         status: 400,
+      }
+    );
+  }
+
+  // check if user is owner of workspace by checking in projectUser table for user_id and project_id
+  const projectUser = await prisma.projectUsers.findFirst({
+    where: {
+      project_id: workspaceId,
+      user_id: session.user.id,
+    },
+  });
+
+  if (!projectUser || projectUser.role !== "owner") {
+    return NextResponse.json(
+      {
+        error: "You are not authorized to perform this action.",
+      },
+      {
+        status: 403,
       }
     );
   }
