@@ -4,7 +4,7 @@ import { PaymentInput } from "../types";
 
 export default function usePayments() {
   const { data: payments, error } = useSWR<PaymentInput[]>(
-    `/api/user/payment`,
+    `/api/payment`,
     fetcher
   );
 

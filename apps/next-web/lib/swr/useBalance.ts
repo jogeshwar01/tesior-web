@@ -4,7 +4,7 @@ import { BalanceInput } from "../types";
 
 export default function useBalance() {
   const { data: balance, error } = useSWR<BalanceInput>(
-    `/api/user/balance`,
+    `/api/balance`,
     fetcher,
     { refreshInterval: 30000 }
   );

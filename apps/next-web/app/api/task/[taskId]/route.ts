@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { getSearchParams } from "@/lib/utils/functions";
 
-// Update task status and record approval/rejection
+// PUT /api/task/[taskId] - Update task status and record approval/rejection
 export async function PUT(
   req: NextRequest,
   { params }: { params: { taskId: string } }

@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { lamportsToSol } from "@/lib/utils/solana";
 import { NextRequest, NextResponse } from "next/server";
 import { TaskStatus } from "@/lib/types";
+import { getSearchParams } from "@/lib/utils/functions";
 
 // Transfer funds from admin's account to user's account
 export async function POST(req: NextRequest) {
@@ -11,6 +12,20 @@ export async function POST(req: NextRequest) {
 
   if (!adminId) {
     return new Response("Admin is required", { status: 400 });
+  }
+
+  const searchParams = getSearchParams(req.url);
+  const workspaceId: string | undefined = searchParams.workspaceId || undefined;
+  
+  const projectUser = await prisma.projectUsers.findFirst({
+    where: {
+      project_id: workspaceId,
+      user_id: adminId,
+    },
+  });
+
+  if (!projectUser || projectUser.role !== "owner") {
+    return new Response("Unauthorized", { status: 401 });
   }
 
   const body = await req.json();

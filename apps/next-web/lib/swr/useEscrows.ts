@@ -4,7 +4,7 @@ import { PaymentInput } from "../types";
 
 export default function useEscrows() {
   const { data: escrows, error } = useSWR<PaymentInput[]>(
-    `/api/admin/escrow`,
+    `/api/escrow`,
     fetcher
   );
 

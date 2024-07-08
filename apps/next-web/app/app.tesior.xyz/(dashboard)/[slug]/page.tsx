@@ -1,6 +1,5 @@
 "use client"
 
-import { Github, Twitter } from "@/components/shared/icons";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 

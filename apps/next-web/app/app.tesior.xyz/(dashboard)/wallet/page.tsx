@@ -51,14 +51,14 @@ export default function Wallet() {
         signature,
       });
 
-      const response = await fetch(`/api/admin/escrow`, {
+      const response = await fetch(`/api/escrow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: amount, signature }),
       });
 
       if (response.status === 200) {
-        // mutate(`/api/user/balance`);  // no need to do this as useBalance SWR refreshes every 30 seconds
+        // mutate(`/api/balance`);  // no need to do this as useBalance SWR refreshes every 30 seconds
         toast.success("Escrow creation initiated!");
       } else {
         toast.error("Failed to send escrow");
@@ -71,7 +71,7 @@ export default function Wallet() {
 
   async function withdraw() {
     try {
-      const response = await fetch(`/api/user/payment`, {
+      const response = await fetch(`/api/payment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -100,11 +100,9 @@ export default function Wallet() {
           </div>
           <div className="flex justify-center">
             <button onClick={withdraw}>Withdraw</button>
-            {session?.data?.user?.role === "admin" && (
-              <button className="ml-10" onClick={deposit}>
-                Deposit
-              </button>
-            )}
+            <button className="ml-10" onClick={deposit}>
+              Deposit
+            </button>
           </div>
         </div>
       ),

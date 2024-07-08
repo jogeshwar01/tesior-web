@@ -6,7 +6,7 @@ type Transfer = "sent" | "received";
 
 export default function useTransfers(sentOrReceived: Transfer) {
   const { data: transfers, error } = useSWR<TransferInput[]>(
-    `/api/user/transfer?transfer=${sentOrReceived}`,
+    `/api/transfer?transfer=${sentOrReceived}`,
     fetcher
   );
 

@@ -15,7 +15,7 @@ import {
 import { Task, TaskStatus } from "@/lib/types";
 import { mutate } from "swr";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
+import useWorkspace from "@/lib/swr/useWorkspace";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -25,11 +25,11 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const task = Task.parse(row.original);
-  const session = useSession();
+  const workspace = useWorkspace();
 
   const handleStatus = async (taskId: string, status: string) => {
     try {
-      const response = await fetch(`/api/admin/task/${taskId}`, {
+      const response = await fetch(`/api/task/${taskId}?workspaceId=${workspace.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -38,7 +38,7 @@ export function DataTableRowActions<TData>({
       const data = await response.json();
 
       if (data.approval) {
-        mutate(`/api/user/task`);
+        mutate(`/api/task?workspaceId=${workspace.id}`);
         toast.success("Task status updated successfully!");
       } else {
         toast.error("Failed to update task status");
@@ -51,16 +51,16 @@ export function DataTableRowActions<TData>({
 
   const handleTransfer = async (taskId: string) => {
     try {
-      const response = await fetch(`/api/admin/transfer`, {
+      const response = await fetch(`/api/transfer?workspaceId=${workspace.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ taskId }),
       });
 
       if (response.status === 200) {
-        mutate(`/api/user/task`);
-        mutate(`/api/user/balance`);
-        mutate(`/api/admin/transfer`);
+        mutate(`/api/task?workspaceId=${workspace.id}`);
+        mutate(`/api/balance`);
+        mutate(`/api/transfer?workspaceId=${workspace.id}`);
         toast.success("Task paid successfully!");
       } else {
         toast.error("Failed to pay for task");
@@ -73,7 +73,7 @@ export function DataTableRowActions<TData>({
 
   return (
     <>
-      {session?.data?.user?.role === "admin" && (
+      {workspace.isOwner && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

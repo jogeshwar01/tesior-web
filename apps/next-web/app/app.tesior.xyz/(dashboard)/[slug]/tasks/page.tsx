@@ -8,9 +8,11 @@ import { Task } from "@/lib/types";
 import { Button } from "@/components/ui/new-york/button";
 import { useContext } from "react";
 import { ModalContext } from "@/components/modals/provider";
+import useWorkspace from "@/lib/swr/useWorkspace";
 
 export default function TaskPage() {
-  const { tasks: data, error, loading } = useTasks();
+  const workspace = useWorkspace();
+  const { tasks: data, error, loading } = useTasks(workspace.id || "");
   const { setShowAddEditTaskModal } = useContext(ModalContext);
 
   if (error) return <div>Failed to load tasks</div>;

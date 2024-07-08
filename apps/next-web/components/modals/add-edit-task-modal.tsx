@@ -25,6 +25,7 @@ import {
   useState,
 } from "react";
 import { Modal } from "@/components/shared";
+import useWorkspace from "@/lib/swr/useWorkspace";
 
 const taskFormSchema = z.object({
   title: z
@@ -66,13 +67,13 @@ export function AddEditTaskModal({
     defaultValues,
     mode: "onChange",
   });
-
+  const workspace = useWorkspace();
   const [saving, setSaving] = useState(false);
 
   const saveTask = async (data: any) => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/user/task`, {
+      const response = await fetch(`/api/task?workspaceId=${workspace.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -81,7 +82,7 @@ export function AddEditTaskModal({
       setShowAddEditTaskModal(false);
       toast.success("Task successfully created!");
 
-      mutate(`/api/user/task`);
+      mutate(`/api/task?workspaceId=${workspace.id}`);
     } catch (error) {
       console.error("Failed to create task", error);
       toast.error("Failed to create task!");

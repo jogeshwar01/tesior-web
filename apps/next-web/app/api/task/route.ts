@@ -21,6 +21,17 @@ export async function POST(req: NextRequest) {
       return new Response("Invalid payload", { status: 411 });
     }
 
+    const projectUser = await prisma.projectUsers.findFirst({
+      where: {
+        project_id: workspaceId,
+        user_id: session.user.id,
+      },
+    });
+
+    if (!projectUser) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const task = await prisma.task.create({
       data: {
         title: parseData.data.title,
@@ -42,15 +53,27 @@ export async function POST(req: NextRequest) {
 export async function GET(req: Request) {
   try {
     const session = await getSession();
-    // admin can view all tasks in the workspace
-    const user_id = session.user.role != "admin" ? session.user.id : undefined;
-    
     const searchParams = getSearchParams(req.url);
     const workspaceId: string | undefined = searchParams.workspaceId || undefined;
 
+    // check if user is workspace owner
+    const projectUser = await prisma.projectUsers.findFirst({
+      where: {
+        project_id: workspaceId,
+        user_id: session.user.id,
+      },
+    });
+
+    if (!projectUser) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const userRole = projectUser.role;
+    const task_user_id = userRole === 'owner' ? undefined : session.user.id;
+
     const tasks = await prisma.task.findMany({
       where: {
-        user_id: user_id,
+        user_id: task_user_id,
         project_id: workspaceId,
       },
       include: {
