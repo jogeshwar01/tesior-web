@@ -29,15 +29,17 @@ export default function TaskPage() {
             Here&apos;s a list of contributions.
           </p>
         </div>
-        <div>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => setShowAddEditTaskModal(true)}
-          >
-            Add Task
-          </Button>
-        </div>
+        {workspace.isOwner && (
+          <div>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setShowAddEditTaskModal(true)}
+            >
+              Add Task
+            </Button>
+          </div>
+        )}
       </div>
       <DataTable data={tasks} columns={columns} />
     </div>

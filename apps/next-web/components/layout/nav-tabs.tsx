@@ -12,12 +12,11 @@ export default function NavTabs() {
 
   const tabs = [
     { name: "Tasks", href: `/${slug}/tasks` },
-    { name: "Payments", href: `/${slug}/payments` },
     { name: "Transfers", href: `/${slug}/transfers` },
   ];
 
   // don't show tabs on home/wallet/error page
-  if (error || pathname === "/wallet" || pathname === "/") return null;
+  if (error || pathname === "/wallet" || pathname === "/" || pathname === "/payments") return null;
 
   return (
     <div className="hidden sm:flex scrollbar-hide mb-[-3px] h-12 items-center justify-start space-x-2 overflow-x-auto">

@@ -33,7 +33,7 @@ export async function GET() {
   }
 }
 
-// Create Escrow payment by admin
+// Create Escrow payment
 export async function POST(req: NextRequest) {
   const session = await getSession();
   const adminId = session.user.id;

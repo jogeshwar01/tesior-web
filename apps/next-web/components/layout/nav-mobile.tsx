@@ -29,18 +29,22 @@ export function NavMobile({
 
   let navItems = [
     { name: "Tasks", href: `/${slug}/tasks` },
-    { name: "Payments", href: `/${slug}/payments` },
     { name: "Transfers", href: `/${slug}/transfers` },
+    { name: "Payments", href: `/payments` },
     { name: "Wallet", href: "/wallet" },
   ];
 
-  if (error || pathname === "/wallet" || pathname === "/") {
+  if (error || pathname === "/wallet" || pathname === "/" || pathname === "/payments") {
     // don't show tabs on home/wallet/error page
     navItems = [
       {
         name: "Wallet",
         href: "/wallet",
       },
+      {
+        name: "Payments",
+        href: "/payments",
+      }
     ];
   }
 

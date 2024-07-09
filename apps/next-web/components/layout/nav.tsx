@@ -26,6 +26,12 @@ export function Nav({ session }: { session: Session | null }) {
             </div>
             <div className="flex items-center space-x-6">
               <Link
+                href="/payments"
+                className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
+              >
+                Payments
+              </Link>
+              <Link
                 href="/wallet"
                 className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
               >
