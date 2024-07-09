@@ -2,7 +2,13 @@
 
 import { useAddEditTaskModal } from "@/components/modals/add-edit-task-modal";
 import { useAddWorkspaceModal } from "@/components/modals/add-workspace-modal";
-import { Dispatch, ReactNode, SetStateAction, createContext } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  Suspense,
+  createContext,
+} from "react";
 
 export const ModalContext = createContext<{
   setShowAddWorkspaceModal: Dispatch<SetStateAction<boolean>>;
@@ -26,7 +32,10 @@ export default function ModalProvider({ children }: { children: ReactNode }) {
       }}
     >
       <AddWorkspaceModal />
-      <AddEditTaskModal />
+      {/* need suspense here because of lazy loading - using useWorkspace in modal */}
+      <Suspense>
+        <AddEditTaskModal />
+      </Suspense>
       {children}
     </ModalContext.Provider>
   );
