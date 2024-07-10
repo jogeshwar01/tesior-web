@@ -13,6 +13,7 @@ export default function NavTabs() {
   const tabs = [
     { name: "Tasks", href: `/${slug}/tasks` },
     { name: "Transfers", href: `/${slug}/transfers` },
+    { name: "Settings", href: `/${slug}/settings` },
   ];
 
   // don't show tabs on home/wallet/error page

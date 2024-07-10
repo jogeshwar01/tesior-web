@@ -30,6 +30,7 @@ export function NavMobile({
   let navItems = [
     { name: "Tasks", href: `/${slug}/tasks` },
     { name: "Transfers", href: `/${slug}/transfers` },
+    { name: "Settings", href: `/${slug}/settings` },
     { name: "Payments", href: `/payments` },
     { name: "Wallet", href: "/wallet" },
   ];

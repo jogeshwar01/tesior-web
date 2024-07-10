@@ -1,7 +1,6 @@
 import { useMediaQuery } from "@/lib/hooks";
 import { Modal } from "@/components/shared";
 import { Button } from "@/components/ui/new-york/button";
-import { Logo } from "@/components/ui/new-york/logo";
 import { InfoTooltip } from "@/components/ui/new-york/tooltip";
 import slugify from "@sindresorhus/slugify";
 import { useRouter } from "next/navigation";

@@ -17,16 +17,16 @@ export async function GET(
       },
       include: {
         users: {
+          where: {
+            user_id: session.user.id,
+          },
           select: {
-            role: true,
             user: {
               select: {
                 id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
+              }
             },
+            role: true,
           },
         },
       },
@@ -38,8 +38,15 @@ export async function GET(
       });
     }
 
-    if (session.user.id !== workspace?.users[0]?.user.id) {
-      return NextResponse.json(new Error("Unauthorized"), { status: 401 });
+    const user = workspace.users.find(
+      (user) => user.user.id === session?.user?.id
+    );
+
+    if (!user) {
+      return NextResponse.json(
+        new Error("You are not a member/owner of this workspace"),
+        { status: 403 }
+      );
     }
 
     return NextResponse.json(workspace);
