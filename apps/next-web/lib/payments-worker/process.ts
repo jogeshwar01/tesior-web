@@ -15,25 +15,21 @@ const connection = new Connection(process.env.RPC_URL ?? "");
 const APP_WALLET_ADDRESS = process.env.APP_WALLET_ADDRESS;
 
 export const processUserPaymentQueue = async (job: {
-  data: { userId: string };
+  data: { userId: string; publicKey: string };
 }) => {
-  const { userId } = job.data as {
+  const { userId, publicKey } = job.data as {
     userId: string;
+    publicKey: string;
   };
-
   console.log("\nInitializing Payout Transaction");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
 
-  const wallet = await prisma.wallet.findFirst({
-    where: { user_id: userId },
-  });
-
   let signature: string;
   try {
-    if (!user || !wallet) {
+    if (!user || !publicKey) {
       throw new Error("User or Public Key Not Found");
     }
     if (!APP_WALLET_ADDRESS) {
@@ -42,7 +38,7 @@ export const processUserPaymentQueue = async (job: {
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: new PublicKey(APP_WALLET_ADDRESS),
-        toPubkey: new PublicKey(wallet.publicKey),
+        toPubkey: new PublicKey(publicKey),
         lamports: user.locked_amount,
       })
     );
@@ -100,13 +96,13 @@ export const processAdminEscrowQueue = async (job: {
     },
   });
 
-  const wallet = await prisma.wallet.findFirst({
+  const wallets = await prisma.wallet.findMany({
     where: {
       user_id: adminId,
     },
   });
 
-  if (!admin || !wallet) {
+  if (!admin || !wallets) {
     throw new Error("Admin or Public Key Not Found");
   }
 
@@ -143,10 +139,15 @@ export const processAdminEscrowQueue = async (job: {
       throw new Error("Transaction sent to wrong address");
     }
 
-    if (
-      transaction?.transaction.message.getAccountKeys().get(0)?.toString() !==
-      wallet.publicKey
-    ) {
+    const senderKey = transaction?.transaction.message
+      .getAccountKeys()
+      .get(0)
+      ?.toString();
+
+    const isSenderValid = wallets.some(
+      (wallet) => wallet.publicKey === senderKey
+    );
+    if (!isSenderValid) {
       throw new Error("Transaction sent from wrong address");
     }
 

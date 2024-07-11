@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { toast } from "sonner";
 
 // To fix hydration errors - Dynamically import the WalletMultiButton for client-side rendering
 const WalletMultiButtonDynamic = dynamic(
@@ -17,7 +18,7 @@ interface UsePublicKeyHook {
 }
 
 export function usePublicKey(): UsePublicKeyHook {
-  const { publicKey, signMessage } = useWallet();
+  const { publicKey, signMessage, disconnect } = useWallet();
 
   const signAndSend = useCallback(async () => {
     if (!publicKey) {
@@ -40,8 +41,12 @@ export function usePublicKey(): UsePublicKeyHook {
           publicKey: publicKey.toString(),
         }),
       });
+      toast.success("Public key verified successfully.");
+    } else if (response.status === 403) {
+      toast.error("Public key already used by another user");
+      await disconnect();
     } else {
-      console.log("Public key already saved in the database");
+      toast.success("Public key authenticated.");
     }
   }, [publicKey, signMessage]);
 

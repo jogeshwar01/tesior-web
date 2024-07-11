@@ -34,13 +34,15 @@ export async function GET() {
 }
 
 // Payout user balance to user (by application escrow)
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
     const userId = session?.user?.id;
+    const body = await req.json();
+    const publicKey = body?.publicKey;
 
-    if (!userId) {
-      return new Response("User is required", { status: 400 });
+    if (!userId || !publicKey) {
+      return new Response("User and public key are required", { status: 400 });
     }
 
     await prisma.$transaction(
@@ -48,21 +50,40 @@ export async function POST() {
         const user = await tx.user.findUnique({
           where: { id: userId },
         });
+
         if (!user) {
           throw new Error("User not found");
         }
+
         if (user.pending_amount < 30000000) {
           throw new Error(
             "Your need to have atleast 0.03 sol as pending amount to withdraw."
           );
         }
-        const amount = user.pending_amount;
 
         if (user.locked_amount > 0) {
           throw new Error(
             "You already have a pending payout. Please wait for it to be processed."
           );
         }
+
+        const wallets = await prisma.wallet.findMany({
+          where: {
+            user_id: userId,
+          },
+        });
+
+        const isReceiverValid = wallets.some(
+          (wallet) => wallet.publicKey === publicKey
+        );
+
+        if (!isReceiverValid) {
+          throw new Error(
+            "Public key does not belong to the user. Please enter a valid public key."
+          );
+        }
+
+        const amount = user.pending_amount;
 
         await tx.user.update({
           where: {
@@ -86,6 +107,7 @@ export async function POST() {
     await Redis.getInstance().send("user_payment", {
       data: {
         userId,
+        publicKey,
       },
     });
 

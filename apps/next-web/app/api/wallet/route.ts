@@ -64,13 +64,16 @@ export async function GET(req: NextRequest) {
   try {
     const wallet = await prisma.wallet.findFirst({
       where: {
-        user_id: session.user.id,
         publicKey: publicKey,
       },
     });
 
     if (!wallet) {
       return new Response("Public key not found", { status: 404 });
+    }
+
+    if(wallet.user_id !== session.user.id) {
+      return new Response("Wallet already connected with another user", { status: 403 });
     }
 
     return NextResponse.json({ message: "Public key found" }, { status: 200 });

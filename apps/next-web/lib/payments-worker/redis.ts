@@ -5,7 +5,7 @@ interface AdminMessage {
 }
 
 interface UserMessage {
-  data: { userId: string };
+  data: { userId: string; publicKey: string };
 }
 
 interface GenericMessage {
