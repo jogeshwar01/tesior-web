@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/workspaces/[idOrSlug]/users – get users for a specific workspace

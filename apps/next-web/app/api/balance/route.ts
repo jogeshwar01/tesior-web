@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { NextResponse } from "next/server";
 import { lamportsToSol } from "@/lib/utils/solana";
 

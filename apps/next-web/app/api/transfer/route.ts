@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { lamportsToSol } from "@/lib/utils/solana";
 import { NextRequest, NextResponse } from "next/server";
 import { TaskStatus } from "@/lib/types";
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const searchParams = getSearchParams(req.url);
   const workspaceId: string | undefined = searchParams.workspaceId || undefined;
-  
+
   const projectUser = await prisma.projectUsers.findFirst({
     where: {
       project_id: workspaceId,

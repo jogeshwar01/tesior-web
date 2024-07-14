@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { TaskStatus } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";

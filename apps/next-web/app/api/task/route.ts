@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { createTaskInput } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 import { TOTAL_DECIMALS } from "@/lib/utils/constants";
@@ -10,7 +10,8 @@ import { getSearchParams } from "@/lib/utils/functions";
 export async function POST(req: NextRequest) {
   try {
     const searchParams = getSearchParams(req.url);
-    const workspaceId: string | undefined = searchParams.workspaceId || undefined;
+    const workspaceId: string | undefined =
+      searchParams.workspaceId || undefined;
 
     const session = await getSession();
     const body = await req.json();
@@ -54,7 +55,8 @@ export async function GET(req: Request) {
   try {
     const session = await getSession();
     const searchParams = getSearchParams(req.url);
-    const workspaceId: string | undefined = searchParams.workspaceId || undefined;
+    const workspaceId: string | undefined =
+      searchParams.workspaceId || undefined;
 
     // check if user is workspace owner
     const projectUser = await prisma.projectUsers.findFirst({
@@ -69,7 +71,7 @@ export async function GET(req: Request) {
     }
 
     const userRole = projectUser.role;
-    const task_user_id = userRole === 'owner' ? undefined : session.user.id;
+    const task_user_id = userRole === "owner" ? undefined : session.user.id;
 
     const tasks = await prisma.task.findMany({
       where: {

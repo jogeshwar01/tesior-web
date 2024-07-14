@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { PublicKey } from "@solana/web3.js";
 import nacl from "tweetnacl";
@@ -72,8 +72,10 @@ export async function GET(req: NextRequest) {
       return new Response("Public key not found", { status: 404 });
     }
 
-    if(wallet.user_id !== session.user.id) {
-      return new Response("Wallet already connected with another user", { status: 403 });
+    if (wallet.user_id !== session.user.id) {
+      return new Response("Wallet already connected with another user", {
+        status: 403,
+      });
     }
 
     return NextResponse.json({ message: "Public key found" }, { status: 200 });

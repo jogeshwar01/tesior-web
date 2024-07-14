@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { getSession } from "@/lib/auth/session";
 
 // GET /api/workspaces/[idOrSlug] - get a workspace by id or slug
@@ -24,7 +24,7 @@ export async function GET(
             user: {
               select: {
                 id: true,
-              }
+              },
             },
             role: true,
           },

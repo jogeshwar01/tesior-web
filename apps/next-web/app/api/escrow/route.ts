@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 import { lamportsToSol, solToLamports } from "@/lib/utils/solana";
 import { Redis } from "@/lib/payments-worker/redis";
 

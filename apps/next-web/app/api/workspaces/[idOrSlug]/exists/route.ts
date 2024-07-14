@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 
 // GET /api/workspaces/[idOrSlug]/exists - check if a workspace with the given slug exists
 export async function GET(

@@ -5,10 +5,10 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import prisma from "@/lib/prisma";
+import prisma from "@repo/prisma";
 
 import { fetchShares, recoverPrivateKey } from "@/lib/shamirs-secret-sharing";
-import { TxnStatus } from "@repo/common";
+import { TxnStatus } from "@/lib/types";
 import { solToLamports } from "@/lib/utils/solana";
 
 const connection = new Connection(process.env.RPC_URL ?? "");
