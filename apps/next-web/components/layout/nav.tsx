@@ -10,8 +10,12 @@ import { Divider } from "@/components/shared/icons";
 import WorkspaceSwitcher from "./workspace-switcher";
 import NavTabs from "./nav-tabs";
 import { NavMobile } from "./nav-mobile";
+import { useSelectedLayoutSegment } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Nav({ session }: { session: Session | null }) {
+  const selectedLayout = useSelectedLayoutSegment();
+
   return (
     <div className="w-full bg-gray-50">
       <div className="sticky left-0 right-0 top-0 z-20 border-b border-gray-200 bg-white">
@@ -27,13 +31,23 @@ export function Nav({ session }: { session: Session | null }) {
             <div className="flex items-center space-x-6">
               <Link
                 href="/payments"
-                className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
+                className={cn(
+                  "hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block",
+                  {
+                    "text-black dark:text-black": selectedLayout === "payments",
+                  }
+                )}
               >
                 Payments
               </Link>
               <Link
                 href="/wallet"
-                className="hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block"
+                className={cn(
+                  "hidden text-sm text-gray-500 transition-colors hover:text-gray-700 sm:block",
+                  {
+                    "text-black dark:text-black": selectedLayout === "wallet",
+                  }
+                )}
               >
                 Wallet
               </Link>

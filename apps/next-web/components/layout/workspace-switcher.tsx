@@ -1,7 +1,7 @@
 "use client";
 
 import useWorkspaces from "@/lib/swr/useWorkspaces";
-import { WorkspaceProps } from "@/lib/types";
+import { RoleProps, WorkspaceProps } from "@/lib/types";
 import { BlurImage, Popover } from "@/components/ui";
 import { Tick } from "@/components/shared/icons";
 import { DICEBEAR_AVATAR_URL } from "@/lib/utils/constants";
@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { ModalContext } from "@/components/modals/provider";
+import { Badge } from "../ui/new-york";
 
 export default function WorkspaceSwitcher() {
   const { workspaces } = useWorkspaces();
@@ -47,7 +48,11 @@ export default function WorkspaceSwitcher() {
     id?: string;
     name: string;
     slug: string;
+    isOwner?: boolean;
     image: string;
+    users: {
+      role: RoleProps;
+    }[];
   };
 
   const [openPopover, setOpenPopover] = useState(false);
@@ -89,6 +94,11 @@ export default function WorkspaceSwitcher() {
             >
               <span className="inline-block max-w-[100px] truncate text-sm font-medium sm:max-w-[200px]">
                 {selected.name}
+                {selected?.users?.[0]?.role && (
+                  <Badge className="ml-2" variant="outline">
+                    {selected.users[0].role}
+                  </Badge>
+                )}
               </span>
             </div>
           </div>
@@ -116,7 +126,7 @@ function WorkspaceList({
   setOpenPopover: (open: boolean) => void;
 }) {
   const { setShowAddWorkspaceModal } = useContext(ModalContext);
-  
+
   const { domain, key } = useParams() as { domain?: string; key?: string };
   const pathname = usePathname();
 
@@ -136,7 +146,7 @@ function WorkspaceList({
   return (
     <div className="relative mt-1 max-h-72 w-full space-y-0.5 overflow-auto rounded-md bg-white p-2 text-base sm:w-60 sm:text-sm sm:shadow-lg">
       <div className="p-2 text-xs text-gray-500">My Workspaces</div>
-      {workspaces.map(({ id, name, slug, logo }) => {
+      {workspaces.map(({ id, name, slug, logo, users }) => {
         return (
           <Link
             key={slug}
@@ -160,6 +170,11 @@ function WorkspaceList({
               }`}
             >
               {name}
+              {users?.[0]?.role && (
+                <Badge className="ml-2" variant="outline">
+                  {users[0].role}
+                </Badge>
+              )}
             </span>
             {selected.slug === slug ? (
               <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-black">

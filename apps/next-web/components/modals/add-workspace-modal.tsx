@@ -88,6 +88,7 @@ function AddWorkspaceModalHelper({
             if (res.status === 200) {
               // can track workspace creation event here
               await mutate("/api/workspaces");
+              await mutate(`/api/workspaces/${slug}`);
               router.push(`/${slug}`);
               toast.success("Successfully created workspace!");
               setShowAddWorkspaceModal(false);

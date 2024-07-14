@@ -48,6 +48,7 @@ function InviteTeammateModal({
           }).then(async (res) => {
             if (res.status === 200) {
               await mutate(`/api/workspaces/${id}/invites`);
+              await mutate(`/api/workspaces`);
               toast.success("User Added!");
               slug && setShowInviteTeammateModal(false);
             } else {

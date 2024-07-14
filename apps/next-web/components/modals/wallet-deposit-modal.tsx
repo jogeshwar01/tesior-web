@@ -77,8 +77,7 @@ function WalletDepositModal({
     } catch (error) {
       console.error("Failed to send escrow", error);
       toast.error("Failed to send escrow.", {
-        description:
-          "Check wallet connection. If the issue still persists, please try again later.",
+        description: (error as any)?.message,
       });
     }
   }
