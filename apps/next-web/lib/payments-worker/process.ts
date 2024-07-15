@@ -77,7 +77,7 @@ export const processUserPaymentQueue = async (job: {
     },
     {
       maxWait: 5000, // default: 2000
-      timeout: 30000, // default: 5000
+      timeout: 15000, // default: 5000 - 15000 is the limit for prisma accelerate
       isolationLevel: "Serializable",
     }
   );
