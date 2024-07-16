@@ -1,7 +1,11 @@
-import { PrismaClient as PrismaClientWithoutExtension } from "@prisma/client";
+import { PrismaClient as PrismaClientWithoutExtension } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
-export const globalForPrisma = global as unknown as {
+// these 2 will be used in cloudflare worker - using this client and accelerate
+export { PrismaClientWithoutExtension };
+export { withAccelerate };
+
+export const globalForPrisma = globalThis as unknown as {
   prismaWithoutClientExtensions: PrismaClientWithoutExtension;
   prismaWithClientExtensions: PrismaClientWithExtensions;
 };

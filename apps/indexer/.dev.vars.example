@@ -1,0 +1,1 @@
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=<YOUR_API_KEY_HERE>"

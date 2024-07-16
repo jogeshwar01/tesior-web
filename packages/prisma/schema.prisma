@@ -195,3 +195,10 @@ enum TaskStatus {
   Rejected
   Paid
 }
+
+model Indexer {
+  id              String @id @default(cuid())
+  transaction     Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
