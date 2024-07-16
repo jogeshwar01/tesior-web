@@ -33,6 +33,7 @@ Tesior is an open-source web3 bounty platform that streamlines financial transac
 - [NextAuth.js](https://next-auth.js.org/) – auth
 - [Solana Web3.js](https://github.com/solana-labs/solana-web3.js) - payments
 - [Turborepo](https://turbo.build/repo) – monorepo
+- [Cloudflare Workers](https://hono.dev/docs/getting-started/cloudflare-workers) – helius indexer
 - [Vercel](https://vercel.com/) – deployments
 
 #### Others
@@ -55,6 +56,7 @@ We love our contributors! Here's how you can contribute:
 - Make a [pull request](https://github.com/jogeshwar01/tesior-web/pull) to add new features/make quality-of-life improvements/fix bugs.
 
 ## Local Development
+
 A guide on how to run Tesior's codebase locally
 
 1. Clone the repo into a public GitHub repository (or fork https://github.com/jogeshwar01/tesior-web).
