@@ -1,3 +1,5 @@
 APP_ID=
 PRIVATE_KEY=
 WEBHOOK_SECRET=
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=<YOUR_API_KEY_HERE>"
+BOT_USERNAME=tesior-bot[bot]

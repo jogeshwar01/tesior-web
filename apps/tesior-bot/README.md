@@ -45,6 +45,10 @@ Note that you require access to the new GitHub Actions for the automated deploym
         cat private-key-pkcs8.pem | wrangler secret put PRIVATE_KEY
         ```
 
+   - `DATABASE_URL`: This is the Prisma accelerate url for the database you want to put all your github bot data in.
+
+   - `BOT_USERNAME`: This is the username of your github bot app. It is generally - `<GITHUB_APP_NAME>[bot]`
+
    - Instead of using `wrangler secret put`, you can also add the variables in the wrangler.toml file under the `[vars]` section.
 
 5. For local development - set the env variables in `.dev.vars` (check `.dev.vars.example` for required variables) and run the following command -
