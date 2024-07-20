@@ -1,9 +1,10 @@
-name = "indexer"
+name = "tesior-bot"
 compatibility_date = "2024-07-14"
 
 # [vars]
-# DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=<YOUR_API_KEY_HERE>"
-# AUTH_TOKEN=
+# APP_ID=
+# PRIVATE_KEY=
+# WEBHOOK_SECRET=
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
