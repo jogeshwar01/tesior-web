@@ -30,6 +30,7 @@ If you don't already have a Helius (https://www.helius.dev) account, you can cre
 
 Click the "New Webhook" button.
 Add the desired transaction types and wallet addresses that you need to index.
+If you only want to track transfers - there is a TRANSFER type in the Enhanced Webhook Transactions.
 Now we'll configure the webhook using the URL that ngrok provided: [https://3214-199-223-251-92.ngrok-free.app](https://3214-199-223-251-92.ngrok-free.app/)
 
 ## Step 3 - Webhook (Hono - Cloudflare Workers)

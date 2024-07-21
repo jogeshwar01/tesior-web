@@ -75,10 +75,13 @@ function WalletDepositModal({
         });
       }
     } catch (error) {
-      console.error("Failed to send escrow", error);
-      toast.error("Failed to send escrow.", {
-        description: (error as any)?.message,
-      });
+      console.error("Failed to send escrow.", (error as any)?.message ?? error);
+      toast.error(
+        "Failed to send escrow. Don't worry, your funds are safe. They will be processed shortly in case of deductions.",
+        {
+          description: (error as any)?.message,
+        }
+      );
     }
   }
 

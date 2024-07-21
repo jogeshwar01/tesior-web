@@ -6,7 +6,7 @@ export const processQueue = async (QUEUE_TYPE: string) => {
     const response = await Redis.getInstance().fetch(QUEUE_TYPE);
     if (!response) {
       console.log(`Nothing left to process in ${QUEUE_TYPE} queue. Waiting...`);
-      setTimeout(resolve, 20000);
+      await new Promise(() => setTimeout(resolve, 20000));
     } else {
       console.log(`Processing ${QUEUE_TYPE} - ${response}`);
 

@@ -45,45 +45,49 @@ export async function POST(req: NextRequest) {
       return new Response("User and public key are required", { status: 400 });
     }
 
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.pending_amount < 30000000) {
+      throw new Error(
+        "Your need to have atleast 0.03 sol as pending amount to withdraw."
+      );
+    }
+
+    if (user.locked_amount > 0) {
+      throw new Error(
+        "You already have a pending payout. Please wait for it to be processed."
+      );
+    }
+
+    const wallets = await prisma.wallet.findMany({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    const isReceiverValid = wallets.some(
+      (wallet) => wallet.publicKey === publicKey
+    );
+
+    if (!isReceiverValid) {
+      throw new Error(
+        "Public key does not belong to the user. Please enter a valid public key."
+      );
+    }
+
+    const amount = user.pending_amount;
+
     await prisma.$transaction(
       async (tx: any) => {
-        const user = await tx.user.findUnique({
-          where: { id: userId },
-        });
-
-        if (!user) {
-          throw new Error("User not found");
+        if (amount > user.pending_amount) {
+          throw new Error("Insufficient balance");
         }
-
-        if (user.pending_amount < 30000000) {
-          throw new Error(
-            "Your need to have atleast 0.03 sol as pending amount to withdraw."
-          );
-        }
-
-        if (user.locked_amount > 0) {
-          throw new Error(
-            "You already have a pending payout. Please wait for it to be processed."
-          );
-        }
-
-        const wallets = await prisma.wallet.findMany({
-          where: {
-            user_id: userId,
-          },
-        });
-
-        const isReceiverValid = wallets.some(
-          (wallet) => wallet.publicKey === publicKey
-        );
-
-        if (!isReceiverValid) {
-          throw new Error(
-            "Public key does not belong to the user. Please enter a valid public key."
-          );
-        }
-
-        const amount = user.pending_amount;
 
         await tx.user.update({
           where: {
