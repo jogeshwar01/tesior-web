@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { App } from "@octokit/app";
 import { verifyWebhookSignature } from "./verify";
+import { convertIssueData } from "./utils";
 import { PrismaClientWithoutExtension, withAccelerate } from "@repo/prisma";
 
 const app = new Hono();
@@ -22,6 +23,8 @@ app.post("/", async (c: any) => {
   });
 
   const storePayloadInDb = async (payload: object) => {
+    const simplifiedIssueData = convertIssueData(payload);
+
     const prisma = new PrismaClientWithoutExtension({
       datasources: {
         db: {
@@ -32,7 +35,7 @@ app.post("/", async (c: any) => {
 
     await prisma.githubBot.create({
       data: {
-        payload: payload,
+        payload: simplifiedIssueData,
       },
     });
   };
