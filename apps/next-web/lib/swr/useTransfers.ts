@@ -4,9 +4,9 @@ import { TransferInput } from "../types";
 
 type Transfer = "sent" | "received";
 
-export default function useTransfers(sentOrReceived: Transfer) {
+export default function useTransfers(sentOrReceived: Transfer, workspaceId?: string) {
   const { data: transfers, error } = useSWR<TransferInput[]>(
-    `/api/transfer?transfer=${sentOrReceived}`,
+    `/api/transfer?transfer=${sentOrReceived}&workspaceId=${workspaceId}`,
     fetcher
   );
 

@@ -19,7 +19,7 @@ export const columns: ColumnDef<TransferInput>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "sender_id",
+    accessorKey: "sender",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sender" />
     ),
@@ -27,14 +27,14 @@ export const columns: ColumnDef<TransferInput>[] = [
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("sender_id")}
+            {(row.getValue("sender") as any)?.name}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "receiver_id",
+    accessorKey: "receiver",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Receiver" />
     ),
@@ -42,7 +42,7 @@ export const columns: ColumnDef<TransferInput>[] = [
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("receiver_id")}
+            {(row.getValue("receiver") as any)?.name}
           </span>
         </div>
       );

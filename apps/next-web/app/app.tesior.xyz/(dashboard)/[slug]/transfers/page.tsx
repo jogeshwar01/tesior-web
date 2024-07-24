@@ -9,12 +9,16 @@ import useWorkspace from "@/lib/swr/useWorkspace";
 
 export default function PaymentPage() {
   const workspace = useWorkspace();
-  const { transfers: sent, error, loading } = useTransfers("sent");
+  const {
+    transfers: sent,
+    error,
+    loading,
+  } = useTransfers("sent", workspace.id || "");
   const {
     transfers: received,
     error: receivedError,
     loading: receivedLoading,
-  } = useTransfers("received");
+  } = useTransfers("received", workspace.id || "");
 
   if (error) return <div>Failed to load sent transfers</div>;
   if (loading) return <div>Loading...</div>;

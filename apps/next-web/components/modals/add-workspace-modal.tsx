@@ -31,16 +31,20 @@ function AddWorkspaceModalHelper({
   const [data, setData] = useState<{
     name: string;
     slug: string;
+    repoUrl: string;
   }>({
     name: "",
     slug: "",
+    repoUrl: "",
   });
-  const { name, slug } = data;
+  const { name, slug, repoUrl } = data;
 
   const [slugError, setSlugError] = useState<string | null>(null);
+  const [repoUrlError, setRepoUrlError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [debouncedSlug] = useDebounce(slug, 500);
+  const [debouncedRepoUrl] = useDebounce(repoUrl, 500);
   useEffect(() => {
     if (debouncedSlug.length > 0 && !slugError) {
       fetch(`/api/workspaces/${slug}/exists`).then(async (res) => {
@@ -50,10 +54,28 @@ function AddWorkspaceModalHelper({
         }
       });
     }
-  }, [debouncedSlug, slugError]);
+
+    if (debouncedRepoUrl.length > 0 && !repoUrlError) {
+      fetch(`/api/workspaces/repo/exists`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          repoUrl: debouncedRepoUrl,
+        }),
+      }).then(async (res) => {
+        if (res.status === 200) {
+          const exists = await res.json();
+          setRepoUrlError(exists === 1 ? "Repo URL is already in use." : null);
+        }
+      });
+    }
+  }, [debouncedSlug, slugError, debouncedRepoUrl, repoUrlError]);
 
   useEffect(() => {
     setSlugError(null);
+    setRepoUrlError(null);
     setData((prev) => ({
       ...prev,
       slug: slugify(name),
@@ -94,13 +116,13 @@ function AddWorkspaceModalHelper({
               setShowAddWorkspaceModal(false);
             } else {
               const { error } = await res.json();
-              const message = error.message;
+              const message = error?.message ?? error;
 
-              if (message.toLowerCase().includes("slug")) {
+              if (message && message.toLowerCase().includes("slug")) {
                 setSlugError(message);
               }
 
-              toast.error(error.message);
+              toast.error(error?.message ?? error);
             }
             setSaving(false);
           });
@@ -147,7 +169,7 @@ function AddWorkspaceModalHelper({
           <div className="relative mt-2 flex rounded-md shadow-sm">
             <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-5 text-gray-500 sm:text-sm">
               tesior
-            </span> 
+            </span>
             <Input
               name="slug"
               id="slug"
@@ -185,8 +207,47 @@ function AddWorkspaceModalHelper({
             </p>
           )}
         </div>
+        <div>
+          <label htmlFor="repoUrl" className="flex items-center space-x-2">
+            <p className="block text-sm font-medium text-gray-700">
+              Github Repository
+            </p>
+            <InfoTooltip
+              content={`This is the github repo you want to link to the workspace.`}
+            />
+          </label>
+          <div className="mt-2 flex rounded-md shadow-sm">
+            <Input
+              name="repoUrl"
+              id="repoUrl"
+              type="text"
+              autoFocus={!isMobile}
+              autoComplete="off"
+              className={`${
+                repoUrlError
+                  ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
+                  : "border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
+              } block w-full rounded-r-md focus:outline-none sm:text-sm`}
+              placeholder="https://github.com/username/repo.git"
+              value={repoUrl}
+              onChange={(e) => {
+                setRepoUrlError(null);
+                setData({ ...data, repoUrl: e.target.value });
+              }}
+              aria-invalid="true"
+            />
+          </div>
+          {repoUrlError && (
+            <p className="mt-2 text-sm text-red-600" id="repoUrl-error">
+              {repoUrlError}
+            </p>
+          )}
+        </div>
 
-        <Button type="submit" disabled={saving || (slugError ? true : false)}>
+        <Button
+          type="submit"
+          disabled={saving || (slugError || repoUrlError ? true : false)}
+        >
           {saving ? "Creating..." : "Create Workspace"}
         </Button>
       </form>

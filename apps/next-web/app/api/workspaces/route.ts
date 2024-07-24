@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { name, slug } = body;
+  const { name, slug, repoUrl } = body;
 
   if (!name || !slug || !userId) {
     return new Response("Invalid payload", { status: 411 });
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         slug,
+        repoUrl,
         users: {
           create: {
             user_id: userId,

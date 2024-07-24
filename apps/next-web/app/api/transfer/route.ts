@@ -123,6 +123,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const sentOrReceived = searchParams.get("transfer") ?? undefined;
+    const workspaceId = searchParams.get("workspaceId") ?? undefined;
     const session = await getSession();
 
     if (!session) {
@@ -134,23 +135,53 @@ export async function GET(req: NextRequest) {
       transfers = await prisma.transfer.findMany({
         where: {
           sender_id: session.user.id,
+          task: {
+            project_id: workspaceId,
+          },
         },
         orderBy: [
           {
             createdAt: "desc",
           },
         ],
+        include: {
+          sender: {
+            select: {
+              name: true,
+            },
+          },
+          receiver: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     } else if (sentOrReceived === "received") {
       transfers = await prisma.transfer.findMany({
         where: {
           receiver_id: session.user.id,
+          task: {
+            project_id: workspaceId,
+          },
         },
         orderBy: [
           {
             createdAt: "desc",
           },
         ],
+        include: {
+          sender: {
+            select: {
+              name: true,
+            },
+          },
+          receiver: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
     }
 

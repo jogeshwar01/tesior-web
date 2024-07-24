@@ -33,11 +33,27 @@ export async function POST(req: NextRequest) {
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const taskUser = await prisma.projectUsers.findFirst({
+      where: {
+        project_id: workspaceId,
+        user: {
+          name: parseData.data.username,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!taskUser) {
+      return new Response("User not found in workspace", { status: 404 });
+    }
+
     const task = await prisma.task.create({
       data: {
         title: parseData.data.title,
         amount: BigInt(parseData.data.amount * TOTAL_DECIMALS),
-        user_id: session.user.id,
+        user_id: taskUser.user_id,
         project_id: workspaceId,
         contact: parseData.data.contact,
         proof: parseData.data.proof,

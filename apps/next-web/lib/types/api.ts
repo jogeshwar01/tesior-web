@@ -1,7 +1,8 @@
 import z from "zod";
 
 export const createTaskInput = z.object({
-  title: z.string().optional(),
+  username: z.string(),
+  title: z.string(),
   contact: z.string(),
   proof: z.string(),
   amount: z.number(),
@@ -14,14 +15,18 @@ export enum TaskStatus {
   Paid = "Paid",
 }
 
-export const Task = createTaskInput.extend({
-  id: z.string(),
-  status: z.nativeEnum(TaskStatus),
-  user_id: z.string(),
-  user: z.object({
-    name: z.string(),
-  }),
-});
+export const Task = createTaskInput
+  .omit({
+    username: true,
+  })
+  .extend({
+    id: z.string(),
+    status: z.nativeEnum(TaskStatus),
+    user_id: z.string(),
+    user: z.object({
+      name: z.string(),
+    }),
+  });
 
 export enum TxnStatus {
   Processing = "Processing",
@@ -49,6 +54,12 @@ export const Transfer = z.object({
   sender_id: z.string(),
   receiver_id: z.string(),
   amount: z.number(),
+  sender: z.object({
+    name: z.string(),
+  }),
+  receiver: z.object({
+    name: z.string(),
+  }),
 });
 
 //-------------------------------------------

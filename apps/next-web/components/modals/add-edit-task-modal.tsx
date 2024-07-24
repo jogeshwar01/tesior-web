@@ -28,6 +28,9 @@ import { Modal } from "@/components/shared";
 import useWorkspace from "@/lib/swr/useWorkspace";
 
 const taskFormSchema = z.object({
+  username: z.string({
+    required_error: "Please enter github username.",
+  }),
   title: z
     .string()
     .min(2, {
@@ -78,14 +81,22 @@ export function AddEditTaskModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      await response.json();
-      setShowAddEditTaskModal(false);
-      toast.success("Task successfully created!");
+      if (response.status === 200) {
+        await response.json();
+        setShowAddEditTaskModal(false);
+        toast.success("Task successfully created!");
 
-      mutate(`/api/task?workspaceId=${workspace.id}`);
-    } catch (error) {
-      console.error("Failed to create task", error);
-      toast.error("Failed to create task!");
+        mutate(`/api/task?workspaceId=${workspace.id}`);
+      } else {
+        toast.error("Failed to create task!", {
+          description: response.text(),
+        });
+      }
+    } catch (error: any) {
+      console.error("Failed to create task");
+      toast.error("Failed to create task!", {
+        description: error?.message ?? error,
+      });
     } finally {
       setSaving(false);
     }
@@ -119,6 +130,20 @@ export function AddEditTaskModal({
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 overflow-y-auto transform scale-90"
         >
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Github Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="jogeshwar01" {...field} />
+                </FormControl>
+                <FormDescription>Enter github username.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="title"
@@ -210,7 +235,10 @@ export function useAddEditTaskModal() {
 
   const AddEditTaskModalCallback = useCallback(
     () => (
-      <AddEditTaskModal showAddEditTaskModal={showAddEditTaskModal} setShowAddEditTaskModal={setShowAddEditTaskModal} />
+      <AddEditTaskModal
+        showAddEditTaskModal={showAddEditTaskModal}
+        setShowAddEditTaskModal={setShowAddEditTaskModal}
+      />
     ),
     [showAddEditTaskModal, setShowAddEditTaskModal]
   );
