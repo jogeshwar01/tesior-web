@@ -72,6 +72,25 @@ app.post("/", async (c: any) => {
     if (payload?.comment?.user?.login !== botUsername) {
       await storePayloadInDb(payload);
     }
+
+    // if comment is a bounty request and made by the owner of the repo
+    if (
+      payload?.comment?.body?.includes("/bounty") &&
+      payload?.comment?.user?.login === payload.repository.owner.login
+    ) {
+      // send msg tagging the user who created the issue
+      const issue_user = `@${payload.issue.user.login}`;
+      await octokit.request(
+        "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
+        {
+          owner: payload.repository.owner.login,
+          repo: payload.repository.name,
+          issue_number: payload.issue.number,
+          body: `Hey ${issue_user}! 🤖 We have received a bounty request for this issue. 💵
+          You shall receive it soon on your tesior dashboard. 🚀`,
+        }
+      );
+    }
   });
 
   app.webhooks.on(

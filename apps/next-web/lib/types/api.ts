@@ -62,6 +62,28 @@ export const Transfer = z.object({
   }),
 });
 
+export const SimplifiedIssueData = z.object({
+  issue: z.object({
+    url: z.string(),
+    user: z.object({
+      login: z.string(),
+    }),
+    comment: z.object({
+      body: z.string(),
+      user: z.object({
+        login: z.string(),
+      }),
+    }),
+    repository: z.object({
+      url: z.string(),
+      name: z.string(),
+      owner: z.object({
+        login: z.string(),
+      }),
+    }),
+  }),
+});
+
 //-------------------------------------------
 // FRONTEND
 
