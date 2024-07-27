@@ -31,7 +31,7 @@ export default function WorkspacePeopleClient() {
   return (
     <>
       {isOwner && <InviteTeammateModal />}
-      <div className="rounded-lg border border-gray-200 bg-white">
+      <div className="rounded-lg border border-accent-3">
         <div className="flex flex-col items-center  md:w-[60vw] justify-between space-y-3 p-5 sm:flex-row sm:space-y-0 sm:p-10">
           <div className="flex flex-col space-y-3">
             <h2 className="text-xl font-medium">People</h2>
@@ -50,7 +50,7 @@ export default function WorkspacePeopleClient() {
             </div>
           )}
         </div>
-        <div className="flex space-x-3 border-b border-gray-200 px-3 sm:px-7">
+        <div className="flex space-x-3 border-b border-accent-3 px-3 sm:px-7">
           {tabs.map((tab) => (
             <div
               key={tab}
@@ -60,7 +60,7 @@ export default function WorkspacePeopleClient() {
             >
               <button
                 onClick={() => setCurrentTab(tab)}
-                className="rounded-md px-3 py-1.5 text-sm transition-all duration-75 hover:bg-gray-100 active:bg-gray-200"
+                className="rounded-md px-3 py-1.5 text-sm transition-all duration-75 hover:bg-accent-3 active:bg-gray-200"
               >
                 {tab}
               </button>

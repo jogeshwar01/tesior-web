@@ -6,7 +6,7 @@ export default function WorkspaceSettingsClient() {
   const { id, name, slug, isOwner } = useWorkspace();
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white ">
+    <div className="rounded-lg border border-accent-3 ">
       <div className="flex flex-col space-y-3 p-10 pb-0">
         <h2 className="text-xl font-medium">General</h2>
         <p className="text-sm text-gray-500">
@@ -15,7 +15,7 @@ export default function WorkspaceSettingsClient() {
       </div>
       <div className="flex items-center justify-between p-10 pt-5 md:w-[60vw]">
         <div className="flex flex-col space-y-1">
-          <p className="text-sm text-gray-500">Workspace</p>
+          <p className="text-sm">Workspace</p>
           <p className="text-md">
             Name: <span className="font-medium">{name}</span>
           </p>

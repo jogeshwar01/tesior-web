@@ -29,8 +29,9 @@ function InviteTeammateModal({
     <Modal
       showModal={showInviteTeammateModal}
       setShowModal={setShowInviteTeammateModal}
+      className="bg-custom-black-100 border-accent-3"
     >
-      <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 px-4 py-4 pt-8 sm:px-16">
+      <div className="flex flex-col items-center justify-center space-y-3 border-b border-accent-3 px-4 py-4 pt-8 sm:px-16">
         <h2 className="text-2xl font-bold">Tesior</h2>
         <h3 className="text-lg font-medium">Add Teammate</h3>
         <p className="text-center text-sm text-gray-500">
@@ -59,10 +60,10 @@ function InviteTeammateModal({
             setInviting(false);
           });
         }}
-        className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 text-left sm:px-16"
+        className="flex flex-col space-y-4 px-4 py-8 text-left sm:px-16"
       >
         <div>
-          <label htmlFor="username" className="block text-sm text-gray-700">
+          <label htmlFor="username" className="block text-sm">
             Github Username
           </label>
           <div className="relative mt-1 rounded-md shadow-sm">

@@ -88,8 +88,9 @@ function AddWorkspaceModalHelper({
     <Modal
       showModal={showAddWorkspaceModal}
       setShowModal={setShowAddWorkspaceModal}
+      className="bg-custom-black-100 border-accent-3"
     >
-      <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 px-4 py-4 pt-8 sm:px-16">
+      <div className="flex flex-col items-center justify-center space-y-3 border-b border-accent-3 px-4 py-4 pt-8 sm:px-16">
         <h2 className="text-2xl font-bold">Tesior</h2>
         <h3 className="text-lg font-medium">Create a new workspace</h3>
       </div>
@@ -127,13 +128,11 @@ function AddWorkspaceModalHelper({
             setSaving(false);
           });
         }}
-        className="flex flex-col space-y-6 bg-gray-50 px-4 py-8 text-left sm:px-16"
+        className="flex flex-col space-y-6 px-4 py-8 text-left sm:px-16"
       >
         <div>
           <label htmlFor="name" className="flex items-center space-x-2">
-            <p className="block text-sm font-medium text-gray-700">
-              Workspace Name
-            </p>
+            <p className="block text-sm font-medium">Workspace Name</p>
             <InfoTooltip
               content={`This is the name of your workspace on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
             />
@@ -146,7 +145,7 @@ function AddWorkspaceModalHelper({
               required
               autoFocus={!isMobile}
               autoComplete="off"
-              className="block p-3 w-full rounded-md border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
+              className="block p-3 w-full rounded-md border-gray-300 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
               placeholder="Acme, Inc."
               value={name}
               onChange={(e) => {
@@ -159,15 +158,13 @@ function AddWorkspaceModalHelper({
 
         <div>
           <label htmlFor="slug" className="flex items-center space-x-2">
-            <p className="block text-sm font-medium text-gray-700">
-              Workspace Slug
-            </p>
+            <p className="block text-sm font-medium">Workspace Slug</p>
             <InfoTooltip
               content={`This is your workspace's unique slug on ${process.env.NEXT_PUBLIC_APP_NAME}.`}
             />
           </label>
           <div className="relative mt-2 flex rounded-md shadow-sm">
-            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-5 text-gray-500 sm:text-sm">
+            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-5 sm:text-sm">
               tesior
             </span>
             <Input
@@ -180,7 +177,7 @@ function AddWorkspaceModalHelper({
               className={`${
                 slugError
                   ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
+                  : "border-gray-300 p-3 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
               } block w-full rounded-r-md focus:outline-none sm:text-sm rounded-l-none`}
               placeholder="acme"
               value={slug}
@@ -209,9 +206,7 @@ function AddWorkspaceModalHelper({
         </div>
         <div>
           <label htmlFor="repoUrl" className="flex items-center space-x-2">
-            <p className="block text-sm font-medium text-gray-700">
-              Github Repository
-            </p>
+            <p className="block text-sm font-medium">Github Repository</p>
             <InfoTooltip
               content={`This is the github repo you want to link to the workspace.`}
             />
@@ -226,7 +221,7 @@ function AddWorkspaceModalHelper({
               className={`${
                 repoUrlError
                   ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
+                  : "border-gray-300 p-3 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
               } block w-full rounded-r-md focus:outline-none sm:text-sm`}
               placeholder="https://github.com/username/repo.git"
               value={repoUrl}

@@ -8,7 +8,7 @@ export function Logo({ className }: { className?: string }) {
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("h-10 w-10 text-black dark:text-white", className)}
+      className={cn("h-10 w-10 text-black", className)}
     >
       <path
         fillRule="evenodd"

@@ -50,7 +50,7 @@ const SignInModal = ({
               <LoadingDots color="#808080" />
             ) : (
               <>
-                <Github className="h-5 w-5" />
+                <Github className="h-5 w-5 text-custom-white-100" />
                 <p>Sign in with Github</p>
               </>
             )}

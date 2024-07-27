@@ -89,8 +89,9 @@ function WalletDepositModal({
     <Modal
       showModal={showWalletDepositModal}
       setShowModal={setShowWalletDepositModal}
+      className="bg-custom-black-100 border-accent-3"
     >
-      <div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 px-4 py-4 pt-8 sm:px-16">
+      <div className="flex flex-col items-center justify-center space-y-3 border-b border-accent-3 px-4 py-4 pt-8 sm:px-16">
         <h2 className="text-2xl font-bold">Tesior</h2>
         <h3 className="text-lg font-medium">Deposit to Wallet</h3>
         <p className="text-center text-sm text-gray-500">
@@ -105,10 +106,10 @@ function WalletDepositModal({
           setDepositing(false);
           setShowWalletDepositModal(false);
         }}
-        className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 text-left sm:px-16"
+        className="flex flex-col space-y-4 px-4 py-8 text-left sm:px-16"
       >
         <div>
-          <label htmlFor="username" className="block text-sm text-gray-700">
+          <label htmlFor="username" className="block text-sm">
             Enter Amount (in SOL)
           </label>
           <div className="relative mt-1 rounded-md shadow-sm">
@@ -124,16 +125,21 @@ function WalletDepositModal({
               required
               value={amount}
               onChange={(e) => setAmount(e.target.valueAsNumber)}
-              className="block w-full rounded-md border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
             />
           </div>
         </div>
-        <Button disabled={depositing || !publicKey}>
-          {depositing
-            ? "Depositing"
-            : !publicKey
-              ? "Connect Wallet to Deposit"
-              : "Deposit"}
+        <Button
+          className="bg-accent-2 hover:bg-black"
+          disabled={depositing || !publicKey}
+        >
+          <div className="text-white">
+            {depositing
+              ? "Depositing"
+              : !publicKey
+                ? "Connect Wallet to Deposit"
+                : "Deposit"}
+          </div>
         </Button>
       </form>
     </Modal>

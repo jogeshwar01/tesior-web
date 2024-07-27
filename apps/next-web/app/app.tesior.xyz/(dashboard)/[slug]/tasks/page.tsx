@@ -35,6 +35,7 @@ export default function TaskPage() {
               variant="outline"
               size="lg"
               onClick={() => setShowAddEditTaskModal(true)}
+              className="hover:bg-black"
             >
               Add Task
             </Button>

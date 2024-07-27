@@ -117,7 +117,7 @@ export function AddEditTaskModal({
 
   return (
     <Modal
-      className="p-8 max-h-[90vh] overflow-y-auto"
+      className="p-8 max-h-[90vh] overflow-y-auto bg-custom-black-100 border-custom-black-100"
       showModal={showAddEditTaskModal}
       setShowModal={setShowAddEditTaskModal}
     >

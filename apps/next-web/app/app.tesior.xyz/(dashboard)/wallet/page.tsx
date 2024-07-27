@@ -34,11 +34,14 @@ export default function Wallet() {
             <div className="mx-5 text-2xl">{balance?.pending_amount || 0}</div>
           </div>
           <div className="flex justify-center">
-            <button onClick={() => setShowWalletWithdrawModal(true)}>
+            <button
+              className="border border-accent-3 p-2 rounded-md hover:bg-black"
+              onClick={() => setShowWalletWithdrawModal(true)}
+            >
               Withdraw
             </button>
             <button
-              className="ml-10"
+              className="ml-10 border border-accent-3 p-2 rounded-md hover:bg-black"
               onClick={() => setShowWalletDepositModal(true)}
             >
               Deposit

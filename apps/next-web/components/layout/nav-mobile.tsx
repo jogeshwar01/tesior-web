@@ -11,15 +11,7 @@ import UserDropdown from "./user-dropdown";
 import { useSelectedLayoutSegment } from "next/navigation";
 import useWorkspace from "@/lib/swr/useWorkspace";
 
-type NavTheme = "light" | "dark";
-
-export function NavMobile({
-  theme = "light",
-  session,
-}: {
-  theme?: NavTheme;
-  session: Session | null;
-}) {
+export function NavMobile({ session }: { session: Session | null }) {
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
 
@@ -35,7 +27,12 @@ export function NavMobile({
     { name: "Wallet", href: "/wallet" },
   ];
 
-  if (error || pathname === "/wallet" || pathname === "/" || pathname === "/payments") {
+  if (
+    error ||
+    pathname === "/wallet" ||
+    pathname === "/" ||
+    pathname === "/payments"
+  ) {
     // don't show tabs on home/wallet/error page
     navItems = [
       {
@@ -45,7 +42,7 @@ export function NavMobile({
       {
         name: "Payments",
         href: "/payments",
-      }
+      },
     ];
   }
 
@@ -61,36 +58,36 @@ export function NavMobile({
   }, [open]);
 
   return (
-    <div className={cn(theme === "dark" && "dark", "sm:hidden")}>
+    <div className={"sm:hidden"}>
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "fixed right-3 top-3 z-40 rounded-full p-2 transition-colors duration-200 hover:bg-gray-200 focus:outline-none active:bg-gray-300 dark:hover:bg-white/20 dark:active:bg-white/30 lg:hidden",
-          open && "hover:bg-gray-100 active:bg-gray-200"
+          "fixed right-3 top-3 z-40 rounded-full p-2 transition-colors duration-200 hover:bg-accent-4 focus:outline-none active:bg-accent-6 lg:hidden",
+          open && "hover:bg-accent-4 active:bg-accent-6"
         )}
       >
         {open ? (
-          <X className="h-5 w-5 text-gray-600 dark:text-black/70" />
+          <X className="h-5 w-5 text-accent-3" />
         ) : (
-          <Menu className="h-5 w-5 text-gray-600 dark:text-black/70" />
+          <Menu className="h-5 w-5 text-accent-3" />
         )}
       </button>
       <nav
         className={cn(
-          "fixed inset-0 z-20 hidden w-full bg-white px-5 py-16 dark:bg-white dark:text-white/70 sm:hidden",
+          "fixed inset-0 z-20 hidden w-full bg-custom-black-100 px-5 py-16 sm:hidden",
           open && "block"
         )}
       >
-        <ul className="grid divide-y divide-gray-200 dark:divide-black/[0.15]">
+        <ul className="grid divide-y divide-accent-3">
           {navItems.map(({ name, href }) => (
-            <li key={href} className="py-3 text-gray-500">
+            <li key={href} className="py-3">
               <Link
                 href={createHref(`/${href}`)}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors ease-out hover:text-black dark:text-black/50 dark:hover:text-black",
+                  "rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white",
                   {
-                    "text-black dark:text-black": selectedLayout === href,
+                    "text-white": selectedLayout === href,
                   }
                 )}
               >
@@ -100,12 +97,12 @@ export function NavMobile({
           ))}
 
           <div>
-            <li className="px-3 py-2">
+            <li className="px-1 py-4">
               {session ? (
                 <UserDropdown session={session} />
               ) : (
                 <Link
-                  className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
+                  className="font-medium text rounded-md border border-white bg-white p-1 px-4 text-sm text-black transition-all hover:bg-black hover:text-white"
                   href={`${APP_DOMAIN}/login`}
                 >
                   Sign In

@@ -76,9 +76,9 @@ export default function WorkspaceSwitcher() {
       >
         <button
           onClick={() => setOpenPopover(!openPopover)}
-          className="flex items-center justify-between rounded-lg bg-white p-1.5 text-left text-sm transition-all duration-75 hover:bg-gray-100 focus:outline-none active:bg-gray-200"
+          className="flex items-center justify-between rounded-lg bg-custom-black-100 p-1.5 text-left text-sm transition-all duration-7 focus:outline-none "
         >
-          <div className="flex items-center space-x-3 pr-2">
+          <div className="flex items-center space-x-3 pr-2 text-white">
             <BlurImage
               src={selected.image}
               referrerPolicy="no-referrer"
@@ -95,7 +95,7 @@ export default function WorkspaceSwitcher() {
               <span className="inline-block max-w-[100px] truncate text-sm font-medium sm:max-w-[200px]">
                 {selected.name}
                 {selected?.users?.[0]?.role && (
-                  <Badge className="ml-2" variant="outline">
+                  <Badge className="text-white ml-2" variant="outline">
                     {selected.users[0].role}
                   </Badge>
                 )}
@@ -103,7 +103,7 @@ export default function WorkspaceSwitcher() {
             </div>
           </div>
           <ChevronsUpDown
-            className="h-4 w-4 text-gray-400"
+            className="h-4 w-4 text-accent-4"
             aria-hidden="true"
           />
         </button>
@@ -144,14 +144,14 @@ function WorkspaceList({
   );
 
   return (
-    <div className="relative mt-1 max-h-72 w-full space-y-0.5 overflow-auto rounded-md bg-white p-2 text-base sm:w-60 sm:text-sm sm:shadow-lg">
-      <div className="p-2 text-xs text-gray-500">My Workspaces</div>
+    <div className="relative max-h-72 w-full space-y-0.5 overflow-auto rounded-md bg-custom-black-100 p-2 text-base sm:w-60 sm:text-sm sm:shadow-lg">
+      <div className="p-2 text-xs text-accent-6">My Workspaces</div>
       {workspaces.map(({ id, name, slug, logo, users }) => {
         return (
           <Link
             key={slug}
-            className={`relative flex w-full items-center space-x-2 rounded-md px-2 py-1.5 hover:bg-gray-100 active:bg-gray-200 ${
-              selected.slug === slug ? "font-medium" : ""
+            className={`relative flex w-full items-center space-x-2 rounded-md px-2 py-1.5 text-white hover:bg-custom-black-200 active:bg-custom-black-200 ${
+              selected.slug === slug ? "font-medium bg-black" : ""
             } transition-all duration-75`}
             href={href(slug)}
             shallow={false}
@@ -171,13 +171,13 @@ function WorkspaceList({
             >
               {name}
               {users?.[0]?.role && (
-                <Badge className="ml-2" variant="outline">
+                <Badge className="ml-2 text-white" variant="outline">
                   {users[0].role}
                 </Badge>
               )}
             </span>
             {selected.slug === slug ? (
-              <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-black">
+              <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-white">
                 <Tick className="h-5 w-5" aria-hidden="true" />
               </span>
             ) : null}
@@ -190,9 +190,9 @@ function WorkspaceList({
           setOpenPopover(false);
           setShowAddWorkspaceModal(true);
         }}
-        className="flex w-full cursor-pointer items-center space-x-2 rounded-md p-2 transition-all duration-75 hover:bg-gray-100"
+        className="flex w-full cursor-pointer items-center space-x-2 rounded-md p-2 transition-all duration-75 hover:bg-black text-accent-6 hover:text-white"
       >
-        <PlusCircle className="h-6 w-6 text-gray-500" />
+        <PlusCircle className="h-6 w-6" />
         <span className="block truncate">Add a new workspace</span>
       </button>
     </div>
@@ -202,9 +202,9 @@ function WorkspaceList({
 function WorkspaceSwitcherPlaceholder() {
   return (
     <div className="flex animate-pulse items-center space-x-1.5 rounded-lg px-1.5 py-2 sm:w-60">
-      <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
-      <div className="hidden h-8 w-28 animate-pulse rounded-md bg-gray-200 sm:block sm:w-40" />
-      <ChevronsUpDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
+      <div className="h-8 w-8 animate-pulse rounded-full bg-accent-3" />
+      <div className="hidden h-8 w-28 animate-pulse rounded-md bg-accent-3 sm:block sm:w-40" />
+      <ChevronsUpDown className="h-4 w-4 text-accent-4" aria-hidden="true" />
     </div>
   );
 }
