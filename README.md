@@ -1,13 +1,11 @@
-<a href="https://tesior-web.vercel.app">
-  <img alt="The open-source Web3 bounties platform." src="https://github.com/jogeshwar01/tesior-web/assets/85165953/c04320c6-b2ae-4a66-a576-69af897d6327" style="width: 100%;">
-</a>
-<h1 align="center">Tesior</h1>
+<h1 align="center"> Tesior 💵</h1>
 
 <p align="center">
-    The open-source Web3 bounties platform.
+    🤖 The open-source Web3 bounties platform.
     <br />
     <br />
     <a href="#introduction"><strong>Introduction</strong></a> ·
+    <a href="#features"><strong>Features</strong></a> .
     <a href="#tech-stack"><strong>Tech Stack</strong></a> .
     <a href="#contributing"><strong>Contributing</strong></a>
 </p>
@@ -20,7 +18,15 @@
 
 ## Introduction
 
-Tesior is an open-source web3 bounty platform that streamlines financial transactions between contributors and maintainers across various projects. Whether for software, content, or any collaborative effort, Tesior ensures efficient and transparent fund management, enhancing the workflow for all participants.
+Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enabling seamless bounty management and cryptocurrency transactions.
+
+## Features
+
+- With Tesior, project maintainers can efficiently reward contributors directly on GitHub using the `/bounty <amount>` comments, which facilitates immediate crypto transfers into their Tesior wallets.
+- The platform supports comprehensive management of multiple projects for each account, allowing distinct user groups for each.
+- Maintainers can add custom tasks and approve/pay for them on the dashboard itself.
+- The Tesior dashboard offers a detailed overview of all transactions, both sent and received, ensuring transparency and control.
+- Whether you are a contributor or a maintainer, Tesior provides the tools necessary to streamline your project operations.
 
 ## Tech Stack
 

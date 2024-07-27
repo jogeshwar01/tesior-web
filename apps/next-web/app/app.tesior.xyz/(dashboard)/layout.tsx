@@ -11,13 +11,16 @@ export default async function DashboardLayout({
 }) {
   return (
     <Providers>
-      <div className="fixed h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-cyan-100 -z-10" />
-      <Suspense fallback="...">
-        <Navbar />
-      </Suspense>
-      <main className="flex min-h-screen w-full flex-col items-center justify-center pb-16">
-        {children}
-      </main>
+      <div className="min-h-screen w-full bg-custom-black-200">
+        <div className="sticky -top-16 z-20 border-b border-accent-3 bg-custom-black-100">
+          <Suspense fallback="...">
+            <Navbar />
+          </Suspense>
+        </div>
+        <main className="flex min-h-screen w-full flex-col items-center justify-center pb-16">
+          {children}
+        </main>
+      </div>
       <Footer />
     </Providers>
   );
