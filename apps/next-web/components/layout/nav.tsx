@@ -1,6 +1,5 @@
 "use client";
 
-import { APP_DOMAIN } from "@/lib/utils/constants";
 import Link from "next/link";
 import { Suspense } from "react";
 import { MaxWidthWrapper } from "../shared";
@@ -25,38 +24,46 @@ export function Nav({ session }: { session: Session | null }) {
           <Link
             href="/"
             className={cn(
-              "hidden transition-all sm:block font-medium text-white",
+              "transition-all sm:block font-medium text-white",
               scrolled && "translate-y-[3.3rem]"
             )}
           >
             Tesior
           </Link>
-          <Divider className="hidden h-8 w-8 text-accent-3 sm:ml-3 sm:block" />
-          <WorkspaceSwitcher />
+          {session && (
+            <>
+              <Divider className="h-8 w-8 text-accent-3 sm:ml-3 sm:block" />
+              <WorkspaceSwitcher />
+            </>
+          )}
         </div>
         <div className="flex items-center space-x-6">
-          <Link
-            href="/payments"
-            className={cn(
-              "font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block",
-              {
-                "text-custom-white-200": selectedLayout === "payments",
-              }
-            )}
-          >
-            Payments
-          </Link>
-          <Link
-            href="/wallet"
-            className={cn(
-              "font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block",
-              {
-                "text-custom-white-200": selectedLayout === "wallet",
-              }
-            )}
-          >
-            Wallet
-          </Link>
+          {session && (
+            <>
+              <Link
+                href="/payments"
+                className={cn(
+                  "font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block",
+                  {
+                    "text-custom-white-200": selectedLayout === "payments",
+                  }
+                )}
+              >
+                Payments
+              </Link>
+              <Link
+                href="/wallet"
+                className={cn(
+                  "font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block",
+                  {
+                    "text-custom-white-200": selectedLayout === "wallet",
+                  }
+                )}
+              >
+                Wallet
+              </Link>
+            </>
+          )}
           <div className="hidden sm:block">
             <div>
               {session ? (
@@ -64,7 +71,7 @@ export function Nav({ session }: { session: Session | null }) {
               ) : (
                 <Link
                   className="font-medium text rounded-full border border-white bg-white p-1 px-4 text-sm text-black transition-all hover:bg-black hover:text-white"
-                  href={`${APP_DOMAIN}/login`}
+                  href="/login"
                 >
                   Sign In
                 </Link>

@@ -30,9 +30,9 @@ export default function Wallet() {
         "Withdraw or deposit solana from your wallet. You can also view your transaction history.",
       demo: (
         <div className="flex flex-col ">
-          <div className="flex my-10 justify-center align-middle">
-            <Solana />
-            <div className="mx-5 text-2xl">{balance?.pending_amount || 0}</div>
+          <div className="flex my-10 justify-center items-center align-middle">
+            <div><Solana /></div>
+            <div className="mx-5 text-2xl">{balance?.pending_amount || 0} SOL</div>
           </div>
           <div className="flex justify-center">
             <button

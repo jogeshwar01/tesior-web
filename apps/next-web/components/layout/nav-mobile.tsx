@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { APP_DOMAIN } from "@/lib/utils/constants";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -46,8 +45,6 @@ export function NavMobile({ session }: { session: Session | null }) {
     ];
   }
 
-  const createHref = (href: string) => `${APP_DOMAIN}${href}`;
-
   // prevent body scroll when modal is open
   useEffect(() => {
     if (open) {
@@ -79,22 +76,26 @@ export function NavMobile({ session }: { session: Session | null }) {
         )}
       >
         <ul className="grid divide-y divide-accent-3">
-          {navItems.map(({ name, href }) => (
-            <li key={href} className="py-3">
-              <Link
-                href={createHref(`/${href}`)}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white",
-                  {
-                    "text-white": selectedLayout === href,
-                  }
-                )}
-              >
-                {name}
-              </Link>
-            </li>
-          ))}
+          {session && (
+            <>
+              {navItems.map(({ name, href }) => (
+                <li key={href} className="py-3">
+                  <Link
+                    href={`/${href}`}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white",
+                      {
+                        "text-white": selectedLayout === href,
+                      }
+                    )}
+                  >
+                    {name}
+                  </Link>
+                </li>
+              ))}
+            </>
+          )}
 
           <div>
             <li className="px-1 py-4">
@@ -102,8 +103,8 @@ export function NavMobile({ session }: { session: Session | null }) {
                 <UserDropdown session={session} />
               ) : (
                 <Link
-                  className="font-medium text rounded-md border border-white bg-white p-1 px-4 text-sm text-black transition-all hover:bg-black hover:text-white"
-                  href={`${APP_DOMAIN}/login`}
+                  className="font-medium text rounded-full border border-white bg-white p-1 px-4 text-sm text-black transition-all hover:bg-black hover:text-white"
+                  href="/login"
                 >
                   Sign In
                 </Link>

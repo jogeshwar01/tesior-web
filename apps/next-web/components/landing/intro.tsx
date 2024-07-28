@@ -9,7 +9,7 @@ export default function Intro() {
         fill="white"
       />
       <a
-        href="https://twitter.com/jogeshwar01"
+        href="https://x.com/jogeshwar01"
         target="_blank"
         rel="noreferrer"
         className="mx-auto mb-5 flex max-w-fit animate-fade-up items-center justify-center space-x-2 overflow-hidden rounded-full bg-gray-200 px-7 py-2 transition-colors hover:bg-gray-300"
@@ -29,8 +29,8 @@ export default function Intro() {
         className="mt-6 animate-fade-up text-center text-accent-6 opacity-0 [text-wrap:balance] md:text-xl"
         style={{ animationDelay: "0.25s", animationFillMode: "forwards" }}
       >
-        Empower Your Project with Crypto Rewards. Tesior
-        enables project maintainers to distribute bounties efficiently to contributors.
+        Empower Your Project with Crypto Rewards. Tesior enables project
+        maintainers to distribute bounties efficiently to contributors.
       </p>
       <div
         className="mx-auto mt-6 flex animate-fade-up items-center justify-center space-x-5 opacity-0"

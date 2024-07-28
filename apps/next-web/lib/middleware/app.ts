@@ -5,19 +5,19 @@ import { getUserViaToken } from "@/lib/middleware/utils";
 export default async function AppMiddleware(req: NextRequest) {
   const { path, fullPath } = parse(req);
   const user = await getUserViaToken(req);
-  
-  // if there's no user and the path isn't /login or /register, redirect to /login
-  if (!user && path !== "/login") {
+
+  // if there's no user, redirect to /login along with next query param (not for landing page)
+  if (!user && path !== "/login" && path !== "/") {
     return NextResponse.redirect(
       new URL(
-        `/login${path === "/" ? "" : `?next=${encodeURIComponent(fullPath)}`}`,
+        `/login${`?next=${encodeURIComponent(fullPath)}`}`,
         req.url
       )
     );
   }
 
   // if there's a user, go to /
-  else if (user) {
+  if (user) {
     if (path === "/login") {
       return NextResponse.redirect(new URL("/", req.url));
     }

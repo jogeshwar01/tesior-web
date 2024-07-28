@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import useWorkspace from "@/lib/swr/useWorkspace";
 import Link from "next/link";
@@ -25,9 +25,7 @@ export default function WorkspaceHome() {
             className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-accent-3 bg-black px-5 py-2 text-lg text-white shadow-md transition-colors hover:border-white"
             href={`${slug}/tasks`}
           >
-            <p>
-              Go to Workspace Dashboard
-            </p>
+            <p>Go to Workspace Tasks</p>
           </Link>
         </div>
       </div>
