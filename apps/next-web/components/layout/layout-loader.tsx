@@ -1,4 +1,4 @@
-import { LoadingSpinner } from "@/components/shared/icons";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function LayoutLoader() {
   return (

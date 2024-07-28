@@ -6,6 +6,7 @@ import z from "zod";
 import { Transfer } from "@/lib/types";
 import useTransfers from "@/lib/swr/useTransfers";
 import useWorkspace from "@/lib/swr/useWorkspace";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function PaymentPage() {
   const workspace = useWorkspace();
@@ -21,10 +22,10 @@ export default function PaymentPage() {
   } = useTransfers("received", workspace.id || "");
 
   if (error) return <div>Failed to load sent transfers</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   if (receivedError) return <div>Failed to load received transfers</div>;
-  if (receivedLoading) return <div>Loading...</div>;
+  if (receivedLoading) return <LoadingSpinner />;
 
   const sentTransfers = z.array(Transfer).parse(sent);
   const receivedTransfers = z.array(Transfer).parse(received);

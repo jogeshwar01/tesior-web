@@ -5,16 +5,17 @@ import { DataTable } from "@/components/table/transfer/data-table";
 import z from "zod";
 import { Transfer } from "@/lib/types";
 import useTransfers from "@/lib/swr/useTransfers";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function PaymentPage() {
   const { transfers: sent, error, loading } = useTransfers('sent');
   const { transfers: received, error: receivedError, loading: receivedLoading } = useTransfers('received');
 
   if (error) return <div>Failed to load sent transfers</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   if (receivedError) return <div>Failed to load received transfers</div>;
-  if (receivedLoading) return <div>Loading...</div>;
+  if (receivedLoading) return <LoadingSpinner />;
 
   const sentTransfers = z.array(Transfer).parse(sent);
   const receivedTransfers = z.array(Transfer).parse(received);

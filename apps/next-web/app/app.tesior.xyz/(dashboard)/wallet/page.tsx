@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { usePublicKey } from "@/lib/hooks/use-public-key";
 import { useWalletDepositModal } from "@/components/modals/wallet-deposit-modal";
 import { useWalletWithdrawModal } from "@/components/modals/wallet-withdraw-modal";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function Wallet() {
   const session = useSession();
@@ -20,7 +21,7 @@ export default function Wallet() {
     useWalletWithdrawModal();
 
   if (error) return <div>Failed to load wallet</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   const features = [
     {

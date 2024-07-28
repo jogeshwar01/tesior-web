@@ -27,7 +27,7 @@ export default function WorkspacePeopleClient() {
 
   const { isOwner } = useWorkspace();
 
-  const { users } = useUsers({ invites: currentTab === "Invitations" });
+  const { users } = useUsers({ invites: currentTab === "Members" });
 
   return (
     <>
@@ -142,7 +142,7 @@ const UserCard = ({
               !isMachine && (
                 <select
                   className={cn(
-                    "rounded-md border border-gray-200 text-xs text-gray-500 focus:border-gray-600 focus:ring-gray-600",
+                    "rounded-md border border-accent-3text-xs text-gray-500 focus:border-gray-600 focus:ring-gray-600",
                     {
                       "cursor-not-allowed bg-gray-100": !isOwner,
                     }

@@ -49,12 +49,13 @@ function InviteTeammateModal({
           }).then(async (res) => {
             if (res.status === 200) {
               await mutate(`/api/workspaces/${id}/invites`);
+              await mutate(`/api/workspaces/${id}/users`);
               await mutate(`/api/workspaces`);
               toast.success("User Added!");
               slug && setShowInviteTeammateModal(false);
             } else {
               const { error } = await res.json();
-              toast.error(error.message);
+              toast.error(error?.message ?? error);
             }
             setShowInviteTeammateModal(false);
             setInviting(false);
@@ -77,7 +78,7 @@ function InviteTeammateModal({
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="block w-full rounded-md border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
+              className="block w-full rounded-md border-white text-white placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
             />
           </div>
         </div>

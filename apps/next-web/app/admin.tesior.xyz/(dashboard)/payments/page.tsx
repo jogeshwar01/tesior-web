@@ -7,6 +7,7 @@ import z from "zod";
 import { Payment, Escrow } from "@/lib/types";
 import usePayments from "@/lib/swr/usePayments";
 import useEscrows from "@/lib/swr/useEscrows";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function PaymentPage() {
   const { payments: data, error, loading } = usePayments();
@@ -17,10 +18,10 @@ export default function PaymentPage() {
   } = useEscrows();
 
   if (error) return <div>Failed to load payments</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner/>
 
   if (escrowError) return <div>Failed to load escrows</div>;
-  if (escrowLoading) return <div>Loading...</div>;
+  if (escrowLoading) return <LoadingSpinner/>
 
   const payments = z.array(Payment).parse(data);
   const escrows = z.array(Escrow).parse(escrowData);

@@ -29,8 +29,8 @@ export default function Intro() {
         className="mt-6 animate-fade-up text-center text-accent-6 opacity-0 [text-wrap:balance] md:text-xl"
         style={{ animationDelay: "0.25s", animationFillMode: "forwards" }}
       >
-        An open souce web3 bounty app that allows maintainers to reward
-        contributors via crypto.
+        Empower Your Project with Crypto Rewards. Tesior
+        enables project maintainers to distribute bounties efficiently to contributors.
       </p>
       <div
         className="mx-auto mt-6 flex animate-fade-up items-center justify-center space-x-5 opacity-0"

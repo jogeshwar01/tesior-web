@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/new-york/button";
 import { useContext } from "react";
 import { ModalContext } from "@/components/modals/provider";
 import useWorkspace from "@/lib/swr/useWorkspace";
+import { LoadingSpinner } from "@/components/custom/loading";
 
 export default function TaskPage() {
   const workspace = useWorkspace();
@@ -16,7 +17,7 @@ export default function TaskPage() {
   const { setShowAddEditTaskModal } = useContext(ModalContext);
 
   if (error) return <div>Failed to load tasks</div>;
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
 
   const tasks = z.array(Task).parse(data);
 
