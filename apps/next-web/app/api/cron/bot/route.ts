@@ -1,10 +1,14 @@
 import { SimplifiedIssueData } from "@/lib/types";
 import prisma from "@repo/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { isBountyComment, extractAmount } from "@/lib/utils/bot";
 import { solToLamports, convertDollarToSolana } from "@/lib/utils/solana";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if(req.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   // Find 100 unprocessed entries in the GitHubBot table
   const githubBotData = await prisma.githubBot.findMany({
     where: {
