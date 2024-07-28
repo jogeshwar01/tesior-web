@@ -216,6 +216,7 @@ function AddWorkspaceModalHelper({
               name="repoUrl"
               id="repoUrl"
               type="text"
+              required
               autoFocus={!isMobile}
               autoComplete="off"
               className={`${

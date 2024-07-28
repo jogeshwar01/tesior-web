@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { isBountyComment, extractAmount } from "@/lib/utils/bot";
 import { solToLamports, convertDollarToSolana } from "@/lib/utils/solana";
 
+// the cron deployment might fail on vercel on first push (due to missing env variables)
+// this will automatically work on next commit push
 export async function GET(req: NextRequest) {
   if(req.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

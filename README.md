@@ -46,6 +46,7 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 #### Others
 
 - [Shadcn/ui](https://ui.shadcn.com/)
+- [Aceternity UI](https://ui.aceternity.com/)
 - [Dub.co](https://github.com/dubinc/dub)
 - [Precedent](https://github.com/steven-tey/precedent)
 - [Radix UI](https://www.radix-ui.com/)

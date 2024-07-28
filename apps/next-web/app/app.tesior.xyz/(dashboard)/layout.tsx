@@ -17,7 +17,7 @@ export default async function DashboardLayout({
             <Navbar />
           </Suspense>
         </div>
-        <main className="flex min-h-screen w-full flex-col items-center justify-center pb-16">
+        <main className="flex min-h-screen w-full flex-col items-center pb-16">
           {children}
         </main>
       </div>
