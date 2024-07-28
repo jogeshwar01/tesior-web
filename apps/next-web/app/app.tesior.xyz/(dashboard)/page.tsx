@@ -1,9 +1,14 @@
+import { Spotlight } from "@/components/custom/spotlight";
 import { Github, Twitter } from "@/components/shared/icons";
 
 export default async function Home() {
   return (
     <>
-      <div className="z-10 w-full max-w-xl px-5 xl:px-0">
+      <div className="z-10 w-full max-w-xl px-5 xl:px-0 bg-grid-white/[0.03] ">
+        <Spotlight
+          className="-top-40 left-0 md:left-40 md:-top-20"
+          fill="white"
+        />
         <a
           href="https://twitter.com/jogeshwar01"
           target="_blank"

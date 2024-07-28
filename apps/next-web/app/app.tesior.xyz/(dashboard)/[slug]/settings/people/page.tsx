@@ -14,7 +14,8 @@ import { cn, timeAgo } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-const tabs: Array<"Members" | "Invitations"> = ["Members", "Invitations"];
+const tabs: Array<"Members" | "Invitations"> = ["Members"];
+// add "Invitations" tab if needed
 
 export default function WorkspacePeopleClient() {
   const { setShowInviteTeammateModal, InviteTeammateModal } =
