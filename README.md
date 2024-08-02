@@ -7,7 +7,8 @@
     <a href="#introduction"><strong>Introduction</strong></a> ·
     <a href="#features"><strong>Features</strong></a> .
     <a href="#tech-stack"><strong>Tech Stack</strong></a> .
-    <a href="#contributing"><strong>Contributing</strong></a>
+    <a href="#contributing"><strong>Contributing</strong></a> .
+    <a href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md" target="_blank"><strong>Docs</strong></a>
 </p>
 
 <p align="center">

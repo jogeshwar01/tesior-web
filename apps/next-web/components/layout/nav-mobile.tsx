@@ -76,6 +76,14 @@ export function NavMobile({ session }: { session: Session | null }) {
         )}
       >
         <ul className="grid divide-y divide-accent-3">
+          <a
+            href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white"
+          >
+            Docs
+          </a>
           {session && (
             <>
               {navItems.map(({ name, href }) => (

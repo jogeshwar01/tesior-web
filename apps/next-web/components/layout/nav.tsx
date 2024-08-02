@@ -38,6 +38,14 @@ export function Nav({ session }: { session: Session | null }) {
           )}
         </div>
         <div className="flex items-center space-x-6">
+          <a
+            href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block"
+          >
+            Docs
+          </a>
           {session && (
             <>
               <Link
