@@ -3,7 +3,7 @@
 import useWorkspace from "@/lib/swr/useWorkspace";
 
 export default function WorkspaceSettingsClient() {
-  const { id, name, slug, isOwner } = useWorkspace();
+  const { id, name, slug, isOwner, repoUrl } = useWorkspace();
 
   return (
     <div className="rounded-lg border border-accent-3 ">
@@ -21,6 +21,17 @@ export default function WorkspaceSettingsClient() {
           </p>
           <p className="text-sm text-gray-500">
             Slug: <span className="font-medium">{slug}</span>
+          </p>
+          <p className="text-sm text-gray-500">
+            Repository:{" "}
+            <a
+              href={repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-accent-6"
+            >
+              {repoUrl}
+            </a>
           </p>
           <p className="text-sm text-gray-500">
             Workspace ID: <span className="font-medium">{id}</span>

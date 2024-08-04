@@ -221,8 +221,14 @@ export function AddEditTaskModal({
             )}
           />
 
-          <Button type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save Task"}
+          <Button
+            type="submit"
+            disabled={saving}
+            className="bg-accent-2 hover:bg-accent-1 w-full"
+          >
+            <div className="text-white">
+              {saving ? "Saving..." : "Save Task"}{" "}
+            </div>
           </Button>
         </form>
       </Form>

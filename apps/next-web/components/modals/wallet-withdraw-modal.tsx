@@ -86,7 +86,7 @@ function WalletWithdrawModal({
           </div>
         </div>
         <Button
-          className="bg-accent-2 hover:bg-black"
+          className="bg-accent-2 hover:bg-accent-1"
           disabled={withdrawing || !publicKey}
         >
           <div className="text-white">

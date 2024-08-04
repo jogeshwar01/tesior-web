@@ -16,8 +16,25 @@ import {
 import { toast } from "sonner";
 import { mutate } from "swr";
 import { useDebounce } from "use-debounce";
-import { AlertCircleFill } from "@/components/shared/icons";
+import { AlertCircleFill, Github } from "@/components/shared/icons";
 import { Input } from "@/components/ui/new-york/input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/new-york/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/new-york/popover";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
+import useUserRepos from "@/lib/swr/useUserRepos";
+import useUser from "@/lib/swr/useUser";
 
 function AddWorkspaceModalHelper({
   showAddWorkspaceModal,
@@ -27,6 +44,8 @@ function AddWorkspaceModalHelper({
   setShowAddWorkspaceModal: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
+  const user = useUser();
+  const userRepos = useUserRepos(user?.user?.name ?? "");
 
   const [data, setData] = useState<{
     name: string;
@@ -67,7 +86,9 @@ function AddWorkspaceModalHelper({
       }).then(async (res) => {
         if (res.status === 200) {
           const exists = await res.json();
-          setRepoUrlError(exists === 1 ? "Repo URL is already in use." : null);
+          setRepoUrlError(
+            exists === 1 ? "Repository is already in use." : null
+          );
         }
       });
     }
@@ -145,8 +166,8 @@ function AddWorkspaceModalHelper({
               required
               autoFocus={!isMobile}
               autoComplete="off"
-              className="block p-3 w-full rounded-md border-gray-300 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
-              placeholder="Acme, Inc."
+              className="block p-3 w-full rounded-md border-accent-3 placeholder-gray-400 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-sm"
+              placeholder="Bounty App"
               value={name}
               onChange={(e) => {
                 setData({ ...data, name: e.target.value });
@@ -164,8 +185,8 @@ function AddWorkspaceModalHelper({
             />
           </label>
           <div className="relative mt-2 flex rounded-md shadow-sm">
-            <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-5 sm:text-sm">
-              tesior
+            <span className="inline-flex items-center rounded-l-md border border-r-0 border-accent-3 px-5 sm:text-sm">
+              tesior/
             </span>
             <Input
               name="slug"
@@ -177,9 +198,9 @@ function AddWorkspaceModalHelper({
               className={`${
                 slugError
                   ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 p-3 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
+                  : "border-accent-3 p-3 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
               } block w-full rounded-r-md focus:outline-none sm:text-sm rounded-l-none`}
-              placeholder="acme"
+              placeholder="bounty-app"
               value={slug}
               minLength={3}
               maxLength={48}
@@ -212,26 +233,59 @@ function AddWorkspaceModalHelper({
             />
           </label>
           <div className="mt-2 flex rounded-md shadow-sm">
-            <Input
-              name="repoUrl"
-              id="repoUrl"
-              type="text"
-              required
-              autoFocus={!isMobile}
-              autoComplete="off"
-              className={`${
-                repoUrlError
-                  ? "border-red-300 p-3 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 p-3 placeholder-gray-400 focus:border-gray-500 focus:ring-gray-500"
-              } block w-full rounded-r-md focus:outline-none sm:text-sm`}
-              placeholder="https://github.com/username/repo.git"
-              value={repoUrl}
-              onChange={(e) => {
-                setRepoUrlError(null);
-                setData({ ...data, repoUrl: e.target.value });
-              }}
-              aria-invalid="true"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "w-full justify-between border-accent-3 overflow-hidden",
+                    !repoUrl && "text-muted-foreground"
+                  )}
+                >
+                  <Github />
+                  <div className="flex overflow-x-auto no-scrollbar">
+                    <div className="flex-shrink-0">
+                      {repoUrl
+                        ? userRepos.repos.find((repo) => repo.url === repoUrl)
+                            ?.name
+                        : "Select a github repository"}
+                    </div>
+                  </div>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-100" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-0 block w-full rounded-r-md focus:outline-none sm:text-sm">
+                <Command>
+                  <CommandInput placeholder="Search github repo..." />
+                  <CommandList>
+                    <CommandEmpty>No github repos found.</CommandEmpty>
+                    <CommandGroup>
+                      {userRepos.repos.map((repo) => (
+                        <CommandItem
+                          value={repo.url}
+                          key={repo.url}
+                          onSelect={() => {
+                            setRepoUrlError(null);
+                            setData({ ...data, repoUrl: repo.url });
+                          }}
+                          className="hover:bg-accent-3 cursor-pointer"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              repo.url === repoUrl ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <Github className="mr-2" />
+                          {user?.user?.name}/{repo.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
           {repoUrlError && (
             <p className="mt-2 text-sm text-red-600" id="repoUrl-error">
@@ -243,8 +297,11 @@ function AddWorkspaceModalHelper({
         <Button
           type="submit"
           disabled={saving || (slugError || repoUrlError ? true : false)}
+          className="bg-accent-2 hover:bg-accent-1"
         >
-          {saving ? "Creating..." : "Create Workspace"}
+          <div className="text-white">
+            {saving ? "Creating..." : "Create Workspace"}
+          </div>
         </Button>
       </form>
     </Modal>

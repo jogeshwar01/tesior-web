@@ -21,6 +21,7 @@ export interface WorkspaceProps {
   id: string;
   name: string;
   slug: string;
+  repoUrl: string;
   logo: string | null;
   createdAt: Date;
   users: {
