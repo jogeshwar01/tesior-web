@@ -60,7 +60,7 @@ export default function Wallet() {
       <WalletWithdrawModal />
       <div className="flex my-16 justify-center h-screen">
         {session && (
-          <div className="absolute top-20 lg:block lg:right-40 sm:top-32 lg:top-44">
+          <div className="absolute lg:right-40 sm:top-20 lg:top-32">
             <WalletMultiButtonDynamic />
           </div>
         )}

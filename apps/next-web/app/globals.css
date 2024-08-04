@@ -64,7 +64,7 @@
 /* solana wallet adaptor custom styles */
 .wallet-adapter-button {
   height: 35px !important;
-  color: whte !important;
+  color: white !important;
   background-color: rgb(39, 38, 38) !important;
   border: 1px;
 }
@@ -93,11 +93,12 @@
 }
 
 .wallet-adapter-dropdown-list-item {
-  color: black !important;
+  color: white !important;
 }
 
 .wallet-adapter-dropdown-list-item:hover {
   color: white !important;
+  background-color: rgb(12, 12, 12) !important;
 }
 
 /* Implement a custom scrollbar to preventing ugly looking scroll-overflows */

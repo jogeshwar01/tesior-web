@@ -55,6 +55,7 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 - [Zod](https://zod.dev/)
 - [SWR](https://swr.vercel.app/)
 - [Sonner](https://sonner.emilkowal.ski/)
+- [Ideogram AI](https://ideogram.ai/)
 
 ## Contributing
 

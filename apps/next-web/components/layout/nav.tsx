@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
 import { MaxWidthWrapper } from "../shared";
 import { Session } from "next-auth";
@@ -27,8 +28,14 @@ export function Nav({ session }: { session: Session | null }) {
               "transition-all sm:block font-medium text-white",
               scrolled && "translate-y-[3.3rem]"
             )}
-          >
-            Tesior
+          > 
+            <Image
+              src="/tesior-logo.png"
+              alt="Tesior"
+              width={48}
+              height={48}
+              quality={100}
+            />
           </Link>
           {session && (
             <>
