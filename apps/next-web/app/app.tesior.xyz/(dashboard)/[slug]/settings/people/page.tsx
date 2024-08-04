@@ -68,7 +68,7 @@ export default function WorkspacePeopleClient() {
             </div>
           ))}
         </div>
-        <div className="grid divide-y divide-gray-200">
+        <div className="grid divide-y divide-accent-3">
           {users ? (
             users.length > 0 ? (
               users.map((user) => (
@@ -142,9 +142,9 @@ const UserCard = ({
               !isMachine && (
                 <select
                   className={cn(
-                    "rounded-md border border-accent-3text-xs text-gray-500 focus:border-gray-600 focus:ring-gray-600",
+                    "rounded-md border border-accent-3 text-xs text-gray-500 focus:border-gray-600 focus:ring-gray-600",
                     {
-                      "cursor-not-allowed bg-gray-100": !isOwner,
+                      "cursor-not-allowed": !isOwner,
                     }
                   )}
                   value={role}

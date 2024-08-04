@@ -14,6 +14,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/new-york/form";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/new-york/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/new-york/popover";
 import { Input } from "@/components/ui/new-york/input";
 import { toast } from "sonner";
 import { mutate } from "swr";
@@ -26,6 +39,10 @@ import {
 } from "react";
 import { Modal } from "@/components/shared";
 import useWorkspace from "@/lib/swr/useWorkspace";
+import { cn } from "@/lib/utils";
+import { CheckIcon } from "lucide-react";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import useUsers from "@/lib/swr/useUsers";
 
 const taskFormSchema = z.object({
   username: z.string({
@@ -71,6 +88,7 @@ export function AddEditTaskModal({
     mode: "onChange",
   });
   const workspace = useWorkspace();
+  const workspaceUsers = useUsers();
   const [saving, setSaving] = useState(false);
 
   const saveTask = async (data: any) => {
@@ -136,11 +154,62 @@ export function AddEditTaskModal({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Github Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="jogeshwar01" {...field} />
-                </FormControl>
-                <FormDescription>Enter github username.</FormDescription>
-                <FormMessage />
+                <div className="mt-2 flex rounded-md shadow-sm">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? workspaceUsers?.users?.find(
+                                (user) => user?.name === field.value
+                              )?.name
+                            : "Select user"}
+                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search user..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No user found.</CommandEmpty>
+                          <CommandGroup>
+                            {workspaceUsers?.users?.map((user) => (
+                              <CommandItem
+                                value={user.name}
+                                key={user.name}
+                                onSelect={() => {
+                                  form.setValue("username", user.name);
+                                }}
+                                className="hover:bg-accent-3 cursor-pointer"
+                              >
+                                {user.name}
+                                <CheckIcon
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    user.name === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </FormItem>
             )}
           />

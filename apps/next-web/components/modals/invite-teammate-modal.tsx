@@ -82,7 +82,7 @@ function InviteTeammateModal({
             />
           </div>
         </div>
-        <Button disabled={inviting}>{inviting ? "Adding" : "Add"}</Button>
+        <Button className="bg-accent-2 hover:bg-accent-1 text-white" disabled={inviting}>{inviting ? "Adding" : "Add"}</Button>
       </form>
     </Modal>
   );
