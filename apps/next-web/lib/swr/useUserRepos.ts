@@ -2,7 +2,7 @@ import { fetcher } from "@/lib/utils";
 import useSWRImmutable from "swr/immutable";
 
 export default function useUserRepos(username: string) {
-  const fetchApiUrl = `https://api.github.com/users/${username}/repos?per_page=20&page=1`;
+  const fetchApiUrl = `https://api.github.com/users/${username}/repos?per_page=100&page=1`;
 
   const { data, error } = useSWRImmutable(fetchApiUrl, fetcher);
   let userRepos: {

@@ -6,6 +6,10 @@ import { lamportsToSol } from "@/lib/utils/solana";
 // GET /api/user – get a specific user
 export const GET = async () => {
   const session = await getSession();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
   const user = await prisma.user.findUnique({
     where: {
       id: session.user.id,
