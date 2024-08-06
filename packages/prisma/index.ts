@@ -11,7 +11,7 @@ export const globalForPrisma = globalThis as unknown as {
 };
 
 // Prevents flooding with idle connections
-const prismaWithoutClientExtensions =
+export const prismaWithoutClientExtensions =
   globalForPrisma.prismaWithoutClientExtensions ||
   new PrismaClientWithoutExtension();
 

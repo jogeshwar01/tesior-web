@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { globalForPrisma } from "@repo/prisma";
+import { prismaWithoutClientExtensions } from "@repo/prisma";
 import GithubProvider from "next-auth/providers/github";
 
 export const authOptions: NextAuthOptions = {
@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(globalForPrisma.prismaWithoutClientExtensions),
+  adapter: PrismaAdapter(prismaWithoutClientExtensions),
   // need to add strategy to jwt else will get jwt from database (won't go inside jwt callback)
   // for adapters, default is database else default is jwt
   // need this to use getToken in nextjs middleware to get next auth jwt

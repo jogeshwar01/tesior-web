@@ -2,7 +2,7 @@
 
 import { columns } from "@/components/table/payment/columns";
 import { columns as escrowColumns } from "@/components/table/payment/columns";
-import { DataTable } from "@/components/table/payment/data-table"; //using common data-table component
+import { DataTable } from "@/components/table/payment/data-table"; // using common data-table component
 import z from "zod";
 import { Payment, Escrow } from "@/lib/types";
 import usePayments from "@/lib/swr/usePayments";

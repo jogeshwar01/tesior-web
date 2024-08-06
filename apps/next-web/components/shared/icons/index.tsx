@@ -10,4 +10,5 @@ export { default as Delete } from "./delete";
 export { default as Solana } from "./solana";
 export { default as Divider } from "./divider";
 export { default as Tick } from "./tick";
+export { default as Copy } from "./copy";
 export { default as AlertCircleFill } from "./alert-circle-fill";

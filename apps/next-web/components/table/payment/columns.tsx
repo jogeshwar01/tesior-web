@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/new-york/badge";
 import { PaymentInput } from "@/lib/types";
 import { DataTableColumnHeader } from "../common/data-table-column-header";
+import { CopyButton } from "@/components/shared/copy-button";
 
 export const statuses = [
   {
@@ -25,13 +26,19 @@ export const statuses = [
 
 export const columns: ColumnDef<PaymentInput>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "signature",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Payment" />
+      <DataTableColumnHeader column={column} title="Signature" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px]">
-        {(row.getValue("id") as string)?.substring(0, 8)}
+      <div className="w-[80px] flex">
+        <div className="w-[100%]">
+          {(row.getValue("signature") as string)?.substring(0, 14)}...
+        </div>
+        <CopyButton
+          value={row.getValue("signature")}
+          className="[&>*]:h-3 [&>*]:w-3 ml-16 right-0"
+        />
       </div>
     ),
     enableSorting: false,
