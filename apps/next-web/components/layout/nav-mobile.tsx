@@ -3,47 +3,20 @@
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 import { useSelectedLayoutSegment } from "next/navigation";
-import useWorkspace from "@/lib/swr/useWorkspace";
 
 export function NavMobile({ session }: { session: Session | null }) {
   const [open, setOpen] = useState(false);
   const selectedLayout = useSelectedLayoutSegment();
 
-  const { error } = useWorkspace();
-  const pathname = usePathname();
-  const { slug } = useParams() as { slug?: string };
-
   let navItems = [
-    { name: "Tasks", href: `/${slug}/tasks` },
-    { name: "Transfers", href: `/${slug}/transfers` },
-    { name: "Settings", href: `/${slug}/settings` },
     { name: "Payments", href: `/payments` },
     { name: "Wallet", href: "/wallet" },
+    { name: "Leaderboard", href: "/leaderboard" },
   ];
-
-  if (
-    error ||
-    pathname === "/wallet" ||
-    pathname === "/" ||
-    pathname === "/payments"
-  ) {
-    // don't show tabs on home/wallet/error page
-    navItems = [
-      {
-        name: "Wallet",
-        href: "/wallet",
-      },
-      {
-        name: "Payments",
-        href: "/payments",
-      },
-    ];
-  }
 
   // prevent body scroll when modal is open
   useEffect(() => {
@@ -89,7 +62,7 @@ export function NavMobile({ session }: { session: Session | null }) {
               {navItems.map(({ name, href }) => (
                 <li key={href} className="py-3">
                   <Link
-                    href={`/${href}`}
+                    href={href}
                     onClick={() => setOpen(false)}
                     className={cn(
                       "rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white",

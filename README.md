@@ -41,6 +41,7 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 - [Solana Web3.js](https://github.com/solana-labs/solana-web3.js) - payments
 - [Turborepo](https://turbo.build/repo) – monorepo
 - [Helius](https://dev.helius.xyz/) - indexer webhook
+- [Kubernetes](https://github.com/jogeshwar01/tesior-pkm) - private key management
 - [Cloudflare Workers](https://hono.dev/docs/getting-started/cloudflare-workers) – github bot and helius webhook
 - [Vercel](https://vercel.com/) – deployments
 
@@ -57,6 +58,7 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 - [Sonner](https://sonner.emilkowal.ski/)
 - [Ideogram AI](https://ideogram.ai/)
 - [Tesior Bot](https://github.com/apps/tesior-bot)
+- [Shamir Secret Sharing](https://github.com/jogeshwar01/tesior-pkm)
 
 ## Contributing
 

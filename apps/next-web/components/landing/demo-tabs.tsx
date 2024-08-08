@@ -51,7 +51,17 @@ export default function DemoTabs() {
       content: (
         <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-2xl font-bold text-white bg-gradient-to-br from-custom-black-100 via-accent-1 to-custom-black-100">
           <p>Reward Contributors through Github Comments</p>
-          <TabContent image="https://github.com/user-attachments/assets/584eed95-3e99-476d-9a71-8899adac6a45" />
+          <TabContent image="https://github.com/user-attachments/assets/baf8d9b9-6174-4b90-be69-f1c5f8dc5e06" />
+        </div>
+      ),
+    },
+    {
+      title: "Leaderboard",
+      value: "leaderboard",
+      content: (
+        <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-2xl font-bold text-white bg-gradient-to-br from-custom-black-100 via-accent-1 to-custom-black-100">
+          <p>Get Top Contributors in your projects</p>
+          <TabContent image="https://github.com/user-attachments/assets/0a7357e1-ef55-42c5-b46d-2e1b75093e7e" />
         </div>
       ),
     },

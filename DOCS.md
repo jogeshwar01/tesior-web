@@ -6,7 +6,7 @@
 
 ![Home Page](https://github.com/user-attachments/assets/b9b2e982-b50f-4a20-b00e-8309256f9db1 "Home Page")
 
-   - Log in with your GitHub account.
+- Log in with your GitHub account.
 
 ![Login Page](https://github.com/user-attachments/assets/06b85a65-7f26-4e19-89a2-026893d39960 "Login Page")
 
@@ -21,6 +21,7 @@
 3. **Workspace Dashboard**
 
    Once you create the workspace, you will be redirected to the workspace dashboard. Here, you can:
+
    - Create tasks
    - Approve/reject tasks
    - Pay for tasks
@@ -33,6 +34,7 @@
 4. **Manage Payments and Wallet**
 
    In the top right corner, you will find two tabs: **Payments** and **Wallet**.
+
    - **Wallet**: This tab is your Tesior Wallet, where your Solana funds are stored. You can deposit or withdraw funds.
    - **Payments**: All transactions to and from your Tesior Wallet are listed here.
 
@@ -42,8 +44,14 @@
 
 5. **Setting Up Bounties via GitHub**
 
-   To set up bounties through GitHub, install the Tesior bot in your GitHub repository. Ensure that the repository is connected to a workspace on Tesior. Once set up, all comments in the format `/bounty <amount>` will be treated as bounties and processed on Tesior.
+   To set up bounties through GitHub, install the [Tesior Bot](https://github.com/apps/tesior-bot) in your GitHub repository. Ensure that the repository is connected to a workspace on Tesior. Once set up, all comments in the format `/bounty <amount>` will be treated as bounties and processed on Tesior.
 
-![GitHub Bounties](https://github.com/user-attachments/assets/584eed95-3e99-476d-9a71-8899adac6a45 "GitHub Bounties")
+![GitHub Bounties](https://github.com/user-attachments/assets/baf8d9b9-6174-4b90-be69-f1c5f8dc5e06 "GitHub Bounties")
+
+6. **Showcasing Leaderboard**
+
+To recognize the top contributors in your projects, Tesior offers a leaderboard feature. This leaderboard showcases the top contributors based on their completed tasks and bounties, helping to motivate and highlight the efforts of the contributors.
+
+![Leaderboard Page](https://github.com/user-attachments/assets/0a7357e1-ef55-42c5-b46d-2e1b75093e7e "Leaderboard Page")
 
 Enjoy using Tesior Web to manage your projects and bounties seamlessly!

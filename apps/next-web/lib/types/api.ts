@@ -62,6 +62,13 @@ export const Transfer = z.object({
   }),
 });
 
+// object of user_name, bounty_amount, project_count
+export const Leaderboard = z.object({
+  user_name: z.string(),
+  bounty_amount: z.number(),
+  project_count: z.number(),
+});
+
 export const SimplifiedIssueData = z.object({
   issue: z.object({
     url: z.string(),
@@ -99,3 +106,5 @@ export type BalanceInput = {
 export type PaymentInput = z.infer<typeof Payment>;
 
 export type TransferInput = z.infer<typeof Transfer>;
+
+export type LeaderboardInput = z.infer<typeof Leaderboard>;

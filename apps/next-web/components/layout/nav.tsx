@@ -28,7 +28,7 @@ export function Nav({ session }: { session: Session | null }) {
               "transition-all sm:block font-medium text-white",
               scrolled && "translate-y-[3.3rem]"
             )}
-          > 
+          >
             <Image
               src="/tesior-logo.png"
               alt="Tesior"
@@ -55,6 +55,17 @@ export function Nav({ session }: { session: Session | null }) {
           </a>
           {session && (
             <>
+              <Link
+                href="/leaderboard"
+                className={cn(
+                  "font-medium hidden text-sm text-accent-6 transition-colors hover:text-custom-white-200 sm:block",
+                  {
+                    "text-custom-white-200": selectedLayout === "leaderboard",
+                  }
+                )}
+              >
+                Leaderboard
+              </Link>
               <Link
                 href="/payments"
                 className={cn(

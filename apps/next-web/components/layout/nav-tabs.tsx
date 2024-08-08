@@ -24,7 +24,8 @@ export default function NavTabs() {
     error ||
     pathname === "/wallet" ||
     pathname === "/" ||
-    pathname === "/payments"
+    pathname === "/payments" || 
+    pathname === "/leaderboard"
   )
     return null;
 
