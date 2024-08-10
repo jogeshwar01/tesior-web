@@ -7,6 +7,7 @@
     <a href="#introduction"><strong>Introduction</strong></a> ·
     <a href="#features"><strong>Features</strong></a> .
     <a href="#tech-stack"><strong>Tech Stack</strong></a> .
+    <a href="#architecture"><strong>Architecture</strong></a> .
     <a href="#contributing"><strong>Contributing</strong></a> .
     <a href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md" target="_blank"><strong>Docs</strong></a>
 </p>
@@ -23,11 +24,15 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 
 ## Features
 
-- With Tesior, project maintainers can efficiently reward contributors directly on GitHub using the `/bounty <amount>` comments, which facilitates immediate crypto transfers into their Tesior wallets.
-- The platform supports comprehensive management of multiple projects for each account, allowing distinct user groups for each.
-- Maintainers can add custom tasks and approve/pay for them on the dashboard itself.
-- The Tesior dashboard offers a detailed overview of all transactions, both sent and received, ensuring transparency and control.
-- Whether you are a contributor or a maintainer, Tesior provides the tools necessary to streamline your project operations.
+- **Automated GitHub Integration for Bounties:** Instantly reward contributors with crypto (solana) with Tesior Bot via GitHub comments using `/bounty <amount>`.
+- **Enhanced Security Measures:** Utilize multi-cloud Kubernetes clusters and Shamir’s Secret Sharing for robust private key management.
+- **Blockchain Indexing via Helius:** Efficiently index blockchain data using Helius to not miss any transaction to/from tesior wallet.
+- **Workspace Creation and Management:** Create and manage workspaces linked to GitHub repositories for centralized project control.
+- **Multi-Project Management:** Manage multiple projects each with distinct user groups from a single account.
+- **Dashboard Task Management:** Add, approve, and pay for custom tasks directly through the Tesior dashboard.
+- **Transaction Transparency:** Access detailed transaction logs for both incoming and outgoing funds.
+- **Wallet and Payments:** Manage Solana funds and track all wallet transactions through the Tesior interface.
+- **Contributor Recognition with Leaderboard:** Feature and motivate contributors using a leaderboard based on task completion and bounties.
 
 ## Tech Stack
 
@@ -59,6 +64,10 @@ Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enab
 - [Ideogram AI](https://ideogram.ai/)
 - [Tesior Bot](https://github.com/apps/tesior-bot)
 - [Shamir Secret Sharing](https://github.com/jogeshwar01/tesior-pkm)
+
+## Architecture
+
+![Tesior Architecture](/apps/next-web/public/architecture.png)
 
 ## Contributing
 

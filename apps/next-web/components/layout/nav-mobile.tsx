@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import UserDropdown from "./user-dropdown";
 import { useSelectedLayoutSegment } from "next/navigation";
+import Github from "@/components/shared/icons/github";
 
 export function NavMobile({ session }: { session: Session | null }) {
   const [open, setOpen] = useState(false);
@@ -49,6 +50,14 @@ export function NavMobile({ session }: { session: Session | null }) {
         )}
       >
         <ul className="grid divide-y divide-accent-3">
+          <a
+            href="https://github.com/jogeshwar01/tesior-web/"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-md px-3 py-2 text-sm font-medium text-accent-6 transition-colors ease-out hover:text-white"
+          >
+            <Github />
+          </a>
           <a
             href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md"
             target="_blank"
