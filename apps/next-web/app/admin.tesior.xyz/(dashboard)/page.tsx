@@ -5,7 +5,7 @@ export default async function Home() {
     <>
       <div className="z-10 w-full max-w-xl px-5 xl:px-0">
         <a
-          href="https://x.com/jogeshwar01"
+          href="https://x.com/jogeshwar01/status/1823985414111367367"
           target="_blank"
           rel="noreferrer"
           className="mx-auto mb-5 flex max-w-fit animate-fade-up items-center justify-center space-x-2 overflow-hidden rounded-full bg-gray-200 px-7 py-2 transition-colors hover:bg-gray-300"

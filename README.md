@@ -1,7 +1,9 @@
 <h1 align="center"> Tesior 💵</h1>
 
 <p align="center">
-    🤖 The open-source Web3 bounties platform.
+    🤖 The open-source Web3 bounties platform. Built with Solana.
+    <br />
+    <a href="https://tesior-web.vercel.app"><strong>Learn more »</strong></a>
     <br />
     <br />
     <a href="#introduction"><strong>Introduction</strong></a> ·
@@ -9,18 +11,22 @@
     <a href="#tech-stack"><strong>Tech Stack</strong></a> .
     <a href="#architecture"><strong>Architecture</strong></a> .
     <a href="#contributing"><strong>Contributing</strong></a> .
-    <a href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md" target="_blank"><strong>Docs</strong></a>
+    <a href="https://github.com/jogeshwar01/tesior-web/blob/main/DOCS.md"><strong>Docs</strong></a>
 </p>
 
 <p align="center">
   <a href="https://x.com/jogeshwar01">
     <img src="https://img.shields.io/twitter/follow/jogeshwar01?style=flat&label=%40jogeshwar01&logo=twitter&color=0bf&logoColor=000" alt="Twitter" />
   </a>
+
+  <a href="https://x.com/jogeshwar01/status/1823985414111367367">
+    <img src="https://img.shields.io/twitter/follow/jogeshwar01?style=flat&label=%40tesior&logo=twitter&color=0af&logoColor=000" alt="Twitter" />
+  </a>
 </p>
 
 ## Introduction
 
-Tesior is an advanced open-source platform tailored for the Web3 ecosystem, enabling seamless bounty management and cryptocurrency transactions.
+Tesior is an advanced open-source platform tailored for the Web3 (Solana) ecosystem, enabling seamless bounty management and cryptocurrency transactions.
 
 ## Features
 
