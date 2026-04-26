@@ -1,5 +1,7 @@
 import prisma from "@repo/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { sendPaymentEmail } from "@/lib/email";
+import { lamportsToSol } from "@/lib/utils/solana";
 
 const APP_WALLET_ADDRESS =
   process.env.APP_WALLET_ADDRESS ??
@@ -93,6 +95,12 @@ export async function GET(req: NextRequest) {
           where: {
             id: walletUser.user_id,
           },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            locked_amount: true,
+          },
         });
 
         if (!user) {
@@ -139,6 +147,17 @@ export async function GET(req: NextRequest) {
               },
             }),
           ]);
+
+          // Send payment confirmation email — non-blocking, errors are swallowed
+          // inside sendPaymentEmail so a broken email config won't break the cron.
+          if (user.email) {
+            await sendPaymentEmail({
+              to: user.email,
+              name: user.name,
+              amountSol: lamportsToSol(BigInt(amount)) ?? 0,
+              txSignature: transactionSignature,
+            });
+          }
         } else {
           // ideally user would never have less locked amount than the amount being transferred
           // but if it happens, mark as processed - might have already been updated in real time
