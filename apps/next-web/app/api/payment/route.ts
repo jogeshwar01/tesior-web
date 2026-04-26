@@ -3,10 +3,25 @@ import prisma from "@repo/prisma";
 import { getSession } from "@/lib/auth/session";
 import { lamportsToSol } from "@/lib/utils/solana";
 import { Redis } from "@/lib/payments-worker/redis";
+import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
 
 // Get all user payments
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+    if (!checkRateLimit(`payment:GET:${ip}`, 30, 60_000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(getRateLimitReset(`payment:GET:${ip}`)),
+          },
+        },
+      );
+    }
+
     const session = await getSession();
 
     const payments = await prisma.payment.findMany({
@@ -36,6 +51,20 @@ export async function GET() {
 // Payout user balance to user (by application escrow)
 export async function POST(req: NextRequest) {
   try {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+    if (!checkRateLimit(`payment:POST:${ip}`, 5, 60_000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(getRateLimitReset(`payment:POST:${ip}`)),
+          },
+        },
+      );
+    }
+
     const session = await getSession();
     const userId = session?.user?.id;
     const body = await req.json();
@@ -43,6 +72,14 @@ export async function POST(req: NextRequest) {
 
     if (!userId || !publicKey) {
       return new Response("User and public key are required", { status: 400 });
+    }
+
+    // Per-user rate limit on payout requests (stricter: 3 per minute)
+    if (!checkRateLimit(`payment:POST:user:${userId}`, 3, 60_000)) {
+      return NextResponse.json(
+        { error: "Too many payout requests. Please wait before trying again." },
+        { status: 429 },
+      );
     }
 
     const user = await prisma.user.findUnique({

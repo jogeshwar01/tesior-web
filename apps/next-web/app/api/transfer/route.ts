@@ -4,14 +4,37 @@ import { lamportsToSol } from "@/lib/utils/solana";
 import { NextRequest, NextResponse } from "next/server";
 import { TaskStatus } from "@/lib/types";
 import { getSearchParams } from "@/lib/utils/functions";
+import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
 
 // Transfer funds from admin's account to user's account
 export async function POST(req: NextRequest) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+  if (!checkRateLimit(`transfer:POST:${ip}`, 10, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(getRateLimitReset(`transfer:POST:${ip}`)),
+        },
+      },
+    );
+  }
+
   const session = await getSession();
   const adminId = session?.user?.id;
 
   if (!adminId) {
     return new Response("Admin is required", { status: 400 });
+  }
+
+  // Per-user rate limit on transfer actions
+  if (!checkRateLimit(`transfer:POST:user:${adminId}`, 10, 60_000)) {
+    return NextResponse.json(
+      { error: "Too many transfer requests. Please wait before trying again." },
+      { status: 429 },
+    );
   }
 
   const searchParams = getSearchParams(req.url);
@@ -121,6 +144,20 @@ export async function POST(req: NextRequest) {
 // Get all user transfers - sent or received based on searchParam
 export async function GET(req: NextRequest) {
   try {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+    if (!checkRateLimit(`transfer:GET:${ip}`, 30, 60_000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(getRateLimitReset(`transfer:GET:${ip}`)),
+          },
+        },
+      );
+    }
+
     const searchParams = req.nextUrl.searchParams;
     const sentOrReceived = searchParams.get("transfer") ?? undefined;
     const workspaceId = searchParams.get("workspaceId") ?? undefined;
