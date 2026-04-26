@@ -3,8 +3,8 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  sendAndConfirmTransaction,
 } from "@solana/web3.js";
+import { encode as bs58Encode } from "bs58";
 import prisma from "@repo/prisma";
 
 import { fetchShares, recoverPrivateKey } from "@/lib/shamirs-secret-sharing";
@@ -27,72 +27,92 @@ export const processUserPaymentQueue = async (job: {
     where: { id: userId },
   });
 
-  let signature: string;
-  try {
-    if (!user || !publicKey) {
-      throw new Error("User or Public Key Not Found");
-    }
-    if (!APP_WALLET_ADDRESS) {
-      throw new Error("Set parent public key");
-    }
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: new PublicKey(APP_WALLET_ADDRESS),
-        toPubkey: new PublicKey(publicKey),
-        lamports: user.locked_amount,
-      })
-    );
-
-    const keypair = recoverPrivateKey(await fetchShares());
-
-    signature = await sendAndConfirmTransaction(connection, transaction, [
-      keypair,
-    ]);
-
-    // this should ideally happen before sending to blockchain
-    await prisma.payment.create({
-      data: {
-        user_id: userId,
-        amount: BigInt(user.locked_amount),
-        status: TxnStatus.Processing, // processing as the CRON will update the status after settling user funds
-        signature,
-      },
-    });
-    console.log(
-      `User ${userId} was payed, ${user.locked_amount} lamports, signature: ${signature}`
-    );
-  } catch (error) {
-    console.log((error as Error).message);
+  if (!user || !publicKey) {
+    console.log("User or Public Key Not Found");
+    return;
+  }
+  if (!APP_WALLET_ADDRESS) {
+    console.log("Set parent public key");
     return;
   }
 
-  // - NOT USED FOR NOW - balance part handled by indexer + cron
-  // --------------------------------------------------
-  // await prisma.$transaction(
-  //   async (tx: any) => {
-  //     await tx.user.update({
-  //       where: { id: userId },
-  //       data: { locked_amount: { decrement: user.locked_amount } },
-  //     });
+  // Build and sign the transaction so we have the signature before any network call.
+  const { blockhash, lastValidBlockHeight } =
+    await connection.getLatestBlockhash();
 
-  //     await tx.payment.create({
-  //       data: {
-  //         user_id: userId,
-  //         amount: user.locked_amount,
-  //         status: TxnStatus.Success,
-  //         signature: signature,
-  //       },
-  //     }),
-  //       console.log(
-  //         "User's locked amount and payout is cleared, Transaction Successful.\n"
-  //       );
-  //   },
-  //   {
-  //     maxWait: 5000, // default: 2000
-  //     timeout: 15000, // default: 5000 - 15000 is the limit for prisma accelerate
-  //     isolationLevel: "Serializable",
-  //   }
-  // );
+  const transaction = new Transaction({
+    recentBlockhash: blockhash,
+    feePayer: new PublicKey(APP_WALLET_ADDRESS),
+  }).add(
+    SystemProgram.transfer({
+      fromPubkey: new PublicKey(APP_WALLET_ADDRESS),
+      toPubkey: new PublicKey(publicKey),
+      lamports: user.locked_amount,
+    }),
+  );
+
+  const keypair = recoverPrivateKey(await fetchShares());
+  transaction.sign(keypair);
+
+  // The signature is now deterministically available from the signed transaction.
+  const signatureBytes = transaction.signature;
+  if (!signatureBytes) {
+    console.log("Failed to sign transaction — no signature produced");
+    return;
+  }
+  const signature = bs58Encode(signatureBytes);
+
+  // --- Store in DB with Processing status BEFORE hitting the network ---
+  let paymentId: string;
+  try {
+    const payment = await prisma.payment.create({
+      data: {
+        user_id: userId,
+        amount: BigInt(user.locked_amount),
+        status: TxnStatus.Processing,
+        signature,
+      },
+    });
+    paymentId = payment.id;
+    console.log(`Payment record created (Processing): ${paymentId}, sig: ${signature}`);
+  } catch (dbError) {
+    console.log(
+      "Failed to persist payment record before blockchain submission:",
+      (dbError as Error).message,
+    );
+    return;
+  }
+
+  // --- Send to blockchain and confirm ---
+  try {
+    await connection.sendRawTransaction(transaction.serialize());
+    await connection.confirmTransaction(
+      { signature, blockhash, lastValidBlockHeight },
+      "confirmed",
+    );
+
+    console.log(
+      `User ${userId} was paid, ${user.locked_amount} lamports, signature: ${signature}`,
+    );
+
+    // Update status to Success after on-chain confirmation.
+    // The indexer/cron also upserts this record — the upsert in cron/indexer
+    // will win if it runs concurrently, but both write Success so there's no conflict.
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: { status: TxnStatus.Success },
+    });
+    console.log(`Payment record updated to Success: ${paymentId}`);
+  } catch (error) {
+    console.log("Blockchain submission or confirmation failed:", (error as Error).message);
+
+    // Mark the DB record as Failed so operators can identify stuck payments.
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: { status: TxnStatus.Failure },
+    });
+    console.log(`Payment record updated to Failure: ${paymentId}`);
+  }
 };
 
 export const processAdminEscrowQueue = async (job: {
@@ -119,7 +139,9 @@ export const processAdminEscrowQueue = async (job: {
   }
 
   try {
-    // signature is unique in the database to prevent same txn signature
+    // Signature comes from the client-side Solana wallet — the transaction is
+    // already on-chain by the time this worker runs. Store it immediately with
+    // Processing status so the record exists before any confirmation check.
     await prisma.escrow.create({
       data: {
         user_id: adminId,
@@ -128,67 +150,6 @@ export const processAdminEscrowQueue = async (job: {
         status: TxnStatus.Processing,
       },
     });
-
-    // - NOT USED FOR NOW - balance part handled by indexer + cron
-    // --------------------------------------------------------
-    // // need to wait here to ensure the transaction is confirmed
-    // await new Promise((resolve) => setTimeout(resolve, 30000));
-    // const transaction = await connection.getTransaction(signature, {
-    //   maxSupportedTransactionVersion: 1,
-    // });
-
-    // if (
-    //   BigInt(
-    //     (transaction?.meta?.postBalances[1] ?? 0) -
-    //       (transaction?.meta?.preBalances[1] ?? 0)
-    //   ) !== amountInLamports
-    // ) {
-    //   throw new Error("Transaction amount mismatch");
-    // }
-
-    // if (
-    //   transaction?.transaction.message.getAccountKeys().get(1)?.toString() !==
-    //   APP_WALLET_ADDRESS
-    // ) {
-    //   throw new Error("Transaction sent to wrong address");
-    // }
-
-    // const senderKey = transaction?.transaction.message
-    //   .getAccountKeys()
-    //   .get(0)
-    //   ?.toString();
-
-    // const isSenderValid = wallets.some(
-    //   (wallet) => wallet.publicKey === senderKey
-    // );
-    // if (!isSenderValid) {
-    //   throw new Error("Transaction sent from wrong address");
-    // }
-
-    // // check time also - a user can send the same signature again and again
-    // // parse the signature here to ensure the person has paid 0.1 SOL - is it just a system transfer or something else
-    // // const transaction = Transaction.from(parseData.data.signature);
-
-    // await prisma.$transaction([
-    //   prisma.escrow.update({
-    //     where: {
-    //       id: escrow.id,
-    //     },
-    //     data: {
-    //       status: TxnStatus.Success,
-    //     },
-    //   }),
-    //   prisma.user.update({
-    //     where: {
-    //       id: adminId,
-    //     },
-    //     data: {
-    //       pending_amount: {
-    //         increment: BigInt(amountInLamports),
-    //       },
-    //     },
-    //   }),
-    // ]);
 
     console.log(
       "Admin Escrow Transaction Initiated. It will be processed shortly"
